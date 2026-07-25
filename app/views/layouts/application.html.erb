@@ -7,9 +7,32 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application" %>
+    <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%= yield %>
+    <% if teacher_signed_in? %>
+      <nav>
+        <div class="nav-inner">
+          <div class="nav-links">
+            <%= link_to t("nav.brand"), root_path, class: "brand" %>
+            <%= link_to t("nav.school_classes"), school_classes_path %>
+            <%= link_to t("nav.tests"), tests_path %>
+          </div>
+          <div class="nav-links">
+            <%= render "layouts/locale_switcher" %>
+            <%= button_to t("nav.sign_out"), destroy_teacher_session_path, method: :delete, class: "link-button" %>
+          </div>
+        </div>
+      </nav>
+    <% end %>
+
+    <main class="container">
+      <% flash.each do |type, message| %>
+        <p class="flash flash-<%= type %>"><%= message %></p>
+      <% end %>
+
+      <%= yield %>
+    </main>
   </body>
 </html>

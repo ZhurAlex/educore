@@ -1,0 +1,161 @@
+ru:
+  nav:
+    brand: Educore
+    school_classes: Классы
+    tests: Тесты
+    sign_out: Выйти
+
+  common:
+    edit: Редактировать
+    delete: Удалить
+    remove: Убрать
+
+  pundit:
+    not_authorized: У вас нет прав для этого действия.
+
+  activerecord:
+    attributes:
+      school_class:
+        name: Название
+      student:
+        first_name: Имя
+        last_name: Фамилия
+        birth_date: Дата рождения
+      test:
+        title: Название
+        locale: Язык
+      question:
+        body: Вопрос
+        answer_type: Тип ответа
+        points: Баллы
+        correct_answer: "Правильный ответ (только short_text)"
+
+  dashboard:
+    show:
+      title: Панель управления
+      school_classes: Классы
+      students_count: "учеников: %{count}"
+      new_school_class: Новый класс
+      my_tests: Мои тесты
+      new_test: Новый тест
+
+  school_classes:
+    index:
+      title: Классы
+    show:
+      delete_confirm: Удалить этот класс и всех его учеников?
+      students: Ученики
+      add_student: Добавить ученика
+      remove_confirm: "Убрать %{name}?"
+      assigned_tests: Назначенные тесты
+    new:
+      title: Новый класс
+    edit:
+      title: Редактирование класса
+    create:
+      success: Класс создан.
+    update:
+      success: Класс обновлён.
+    destroy:
+      success: Класс удалён.
+
+  students:
+    new:
+      title: "Добавить ученика в %{class_name}"
+    edit:
+      title: Редактирование ученика
+    create:
+      success: Ученик добавлен.
+    update:
+      success: Данные ученика обновлены.
+    destroy:
+      success: Ученик убран.
+
+  tests:
+    index:
+      title: Мои тесты
+    show:
+      delete_confirm: Удалить этот тест и все его вопросы?
+      questions: Вопросы
+      add_question: Добавить вопрос
+      delete_question_confirm: Удалить этот вопрос?
+      assigned_classes: Назначенные классы
+      assign_to_class: Назначить классу
+      view_qr: Показать QR-код
+      unassign: Отменить назначение
+      unassign_confirm: "Отменить назначение для %{class_name}?"
+      results: Результаты
+      view_results: Посмотреть результаты
+    new:
+      title: Новый тест
+    edit:
+      title: Редактирование теста
+    create:
+      success: Тест создан.
+    update:
+      success: Тест обновлён.
+    destroy:
+      success: Тест удалён.
+
+  questions:
+    new:
+      title: "Новый вопрос для %{test_title}"
+    edit:
+      title: Редактирование вопроса
+    create:
+      success: Вопрос добавлен.
+    update:
+      success: Вопрос обновлён.
+    destroy:
+      success: Вопрос удалён.
+    form:
+      options_legend: "Варианты ответа (только multiple_choice)"
+      option_placeholder: Текст варианта
+      correct: Правильный
+
+  test_assignments:
+    new:
+      title: "Назначить «%{test_title}» классу"
+      school_class: Класс
+      assign: Назначить
+    show:
+      pick_yourself: Найди своё имя
+    create:
+      success: Тест назначен классу.
+    destroy:
+      success: Назначение отменено.
+
+  student_passcodes:
+    new:
+      title: "Привет, %{name}!"
+      hint: "Введи свою дату рождения как день и месяц (ДДММ), например 0703 для 7 марта."
+      passcode_label: Код
+      submit: Продолжить
+    create:
+      invalid_passcode: Не совпадает — попробуй ещё раз.
+
+  test_attempts:
+    show:
+      submit: Завершить
+      completed_headline: "Молодец — тест завершён!"
+      completed_note: Можешь закрывать эту страницу. Учитель увидит результат.
+
+  attempts:
+    index:
+      title: "Результаты — %{test_title}"
+      status: Статус
+      score: Баллы
+      grade: Оценка
+      view: Посмотреть
+    show:
+      question: Вопрос
+      answer: Ответ
+      correct_answer: Правильный ответ
+      points: Баллы
+      override: Исправить
+      teacher_overridden: исправлено
+      save: Сохранить
+
+  responses:
+    update:
+      success: Баллы обновлены.

@@ -1,0 +1,3 @@
+<h1><%= t(".title", class_name: @school_class.name) %></h1>
+
+<%= render "form", student: @student, url: school_class_students_path(@school_class) %>

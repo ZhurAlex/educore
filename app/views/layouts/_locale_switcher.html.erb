@@ -1,0 +1,7 @@
+<span class="locale-switcher">
+  <% I18n.available_locales.each do |locale| %>
+    <%= button_to locale.to_s.upcase, locale_path(locale: locale), method: :patch,
+          form: { style: "display:inline" },
+          class: (locale == I18n.locale ? "current" : nil) %>
+  <% end %>
+</span>

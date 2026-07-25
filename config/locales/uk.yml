@@ -1,0 +1,161 @@
+uk:
+  nav:
+    brand: Educore
+    school_classes: Класи
+    tests: Тести
+    sign_out: Вийти
+
+  common:
+    edit: Редагувати
+    delete: Видалити
+    remove: Прибрати
+
+  pundit:
+    not_authorized: У вас немає прав для цієї дії.
+
+  activerecord:
+    attributes:
+      school_class:
+        name: Назва
+      student:
+        first_name: Ім'я
+        last_name: Прізвище
+        birth_date: Дата народження
+      test:
+        title: Назва
+        locale: Мова
+      question:
+        body: Питання
+        answer_type: Тип відповіді
+        points: Бали
+        correct_answer: "Правильна відповідь (лише short_text)"
+
+  dashboard:
+    show:
+      title: Панель керування
+      school_classes: Класи
+      students_count: "учнів: %{count}"
+      new_school_class: Новий клас
+      my_tests: Мої тести
+      new_test: Новий тест
+
+  school_classes:
+    index:
+      title: Класи
+    show:
+      delete_confirm: Видалити цей клас і всіх його учнів?
+      students: Учні
+      add_student: Додати учня
+      remove_confirm: "Прибрати %{name}?"
+      assigned_tests: Призначені тести
+    new:
+      title: Новий клас
+    edit:
+      title: Редагування класу
+    create:
+      success: Клас створено.
+    update:
+      success: Клас оновлено.
+    destroy:
+      success: Клас видалено.
+
+  students:
+    new:
+      title: "Додати учня до %{class_name}"
+    edit:
+      title: Редагування учня
+    create:
+      success: Учня додано.
+    update:
+      success: Дані учня оновлено.
+    destroy:
+      success: Учня прибрано.
+
+  tests:
+    index:
+      title: Мої тести
+    show:
+      delete_confirm: Видалити цей тест і всі його питання?
+      questions: Питання
+      add_question: Додати питання
+      delete_question_confirm: Видалити це питання?
+      assigned_classes: Призначені класи
+      assign_to_class: Призначити класу
+      view_qr: Показати QR-код
+      unassign: Скасувати призначення
+      unassign_confirm: "Скасувати призначення для %{class_name}?"
+      results: Результати
+      view_results: Переглянути результати
+    new:
+      title: Новий тест
+    edit:
+      title: Редагування тесту
+    create:
+      success: Тест створено.
+    update:
+      success: Тест оновлено.
+    destroy:
+      success: Тест видалено.
+
+  questions:
+    new:
+      title: "Нове питання для %{test_title}"
+    edit:
+      title: Редагування питання
+    create:
+      success: Питання додано.
+    update:
+      success: Питання оновлено.
+    destroy:
+      success: Питання видалено.
+    form:
+      options_legend: "Варіанти відповіді (лише multiple_choice)"
+      option_placeholder: Текст варіанту
+      correct: Правильний
+
+  test_assignments:
+    new:
+      title: "Призначити «%{test_title}» класу"
+      school_class: Клас
+      assign: Призначити
+    show:
+      pick_yourself: Знайди своє ім'я
+    create:
+      success: Тест призначено класу.
+    destroy:
+      success: Призначення скасовано.
+
+  student_passcodes:
+    new:
+      title: "Привіт, %{name}!"
+      hint: "Введи свою дату народження як день і місяць (ДДММ), наприклад 0703 для 7 березня."
+      passcode_label: Код
+      submit: Продовжити
+    create:
+      invalid_passcode: Не збігається — спробуй ще раз.
+
+  test_attempts:
+    show:
+      submit: Завершити
+      completed_headline: "Молодець — тест завершено!"
+      completed_note: Можеш закривати цю сторінку. Вчитель побачить результат.
+
+  attempts:
+    index:
+      title: "Результати — %{test_title}"
+      status: Статус
+      score: Бали
+      grade: Оцінка
+      view: Переглянути
+    show:
+      question: Питання
+      answer: Відповідь
+      correct_answer: Правильна відповідь
+      points: Бали
+      override: Виправити
+      teacher_overridden: виправлено
+      save: Зберегти
+
+  responses:
+    update:
+      success: Бали оновлено.

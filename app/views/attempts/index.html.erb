@@ -1,0 +1,24 @@
+<h1><%= t(".title", test_title: @test.title) %></h1>
+
+<table>
+  <thead>
+    <tr>
+      <th><%= Student.human_attribute_name(:first_name) %></th>
+      <th><%= t(".status") %></th>
+      <th><%= t(".score") %></th>
+      <th><%= t(".grade") %></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @attempts.each do |attempt| %>
+      <tr>
+        <td><%= attempt.student.full_name %></td>
+        <td><%= attempt.status %></td>
+        <td><%= attempt.score %></td>
+        <td><%= attempt.grade %></td>
+        <td><%= link_to t(".view"), attempt_path(attempt) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

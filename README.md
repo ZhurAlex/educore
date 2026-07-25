@@ -1,24 +1,66 @@
-# README
+# Educore
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A student testing app for the classroom: a teacher builds tests, assigns
+them to a class, and prints/projects a QR code. Students scan it, pick their
+name, confirm with a light DDMM passcode, and take the test — multiple
+choice and short answer questions are graded automatically.
 
-Things you may want to cover:
+Full design rationale and decisions log: [docs/SPEC.md](docs/SPEC.md).
 
-* Ruby version
+## Tech stack
 
-* System dependencies
+- Ruby 3.3.0 / Rails 7.1
+- PostgreSQL (via Docker Compose for local dev)
+- Hotwire (Turbo + Stimulus), Sprockets — no JS framework, no bundler
+- Devise (teacher auth — registration is closed, see SPEC Decision #11) + Pundit
+- RSpec + FactoryBot + Faker
+- I18n: `uk` (default), `ru`, `en` — UI chrome only, see SPEC's I18n section
 
-* Configuration
+## Setup
 
-* Database creation
+**Prerequisites:** [asdf](https://asdf-vm.com) (or any Ruby 3.3.0 install) and Docker.
 
-* Database initialization
+```bash
+asdf install                    # ruby 3.3.0, from .tool-versions
+bundle install
 
-* How to run the test suite
+cp .env.example .env            # Postgres credentials for docker-compose
+docker compose up -d db
 
-* Services (job queues, cache servers, search engines, etc.)
+bin/rails db:prepare             # creates + migrates development and test DBs
+bin/rails db:seed                # creates the teacher account + demo data (dev only)
+```
 
-* Deployment instructions
+`db:seed` prints the teacher login. Defaults (override via `SEED_TEACHER_EMAIL` /
+`SEED_TEACHER_PASSWORD` / `SEED_TEACHER_NAME`):
 
-* ...
+- email: `teacher@example.com`
+- password: `password123`
+
+## Running
+
+```bash
+bin/rails server
+```
+
+Visit `http://localhost:3000` and sign in with the seeded teacher account
+above. From there: create school classes and students, build a test,
+assign it to a class, and open the QR code shown on the test's page — that
+same link is what a student's phone lands on.
+
+## Testing
+
+```bash
+bundle exec rspec
+```
+
+## Project structure notes
+
+- `docs/SPEC.md` is the source of truth for *why* things are built the way
+  they are (data model, ownership rules, grading logic, decisions log) —
+  read it before making structural changes.
+- Registration is intentionally closed (single-teacher portfolio project,
+  see SPEC Decision #11) — there is no sign-up flow.
+- `long_text` questions and LLM-assisted grading are deferred (SPEC
+  Decision #12) — MVP only supports `multiple_choice` and `short_text`,
+  both auto-graded.

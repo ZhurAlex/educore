@@ -1,0 +1,7 @@
+FactoryBot.define do
+  factory :option do
+    question
+    body { Faker::Lorem.word }
+    correct { false }
+  end
+end

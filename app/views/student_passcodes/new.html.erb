@@ -1,0 +1,11 @@
+<h1><%= t(".title", name: @student.full_name) %></h1>
+<p><%= t(".hint") %></p>
+
+<%= form_with url: student_passcode_path(@test_assignment, @student), method: :post do |form| %>
+  <div>
+    <%= form.label :passcode, t(".passcode_label") %>
+    <%= form.text_field :passcode, inputmode: "numeric", pattern: "[0-9]{4}", maxlength: 4, autofocus: true %>
+  </div>
+
+  <%= form.submit t(".submit") %>
+<% end %>

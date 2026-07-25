@@ -1,0 +1,12 @@
+<h1><%= t(".title") %></h1>
+
+<ul>
+  <% @school_classes.each do |school_class| %>
+    <li>
+      <%= link_to school_class.name, school_class %>
+      (<%= t("dashboard.show.students_count", count: school_class.students.count) %>)
+    </li>
+  <% end %>
+</ul>
+
+<%= link_to t("dashboard.show.new_school_class"), new_school_class_path %>

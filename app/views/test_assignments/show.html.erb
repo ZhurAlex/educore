@@ -1,0 +1,9 @@
+<h1><%= @test_assignment.test.title %></h1>
+<p><%= @test_assignment.school_class.name %></p>
+
+<h2><%= t(".pick_yourself") %></h2>
+<ul>
+  <% @students.each do |student| %>
+    <li><%= link_to student.full_name, student_passcode_path(@test_assignment, student) %></li>
+  <% end %>
+</ul>

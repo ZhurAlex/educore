@@ -1,0 +1,16 @@
+<%= form_with model: school_class do |form| %>
+  <% if school_class.errors.any? %>
+    <ul>
+      <% school_class.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <%= form.submit %>
+<% end %>

@@ -1,31 +1,161 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
-  hello: "Hello world"
+  nav:
+    brand: Educore
+    school_classes: School classes
+    tests: Tests
+    sign_out: Sign out
+
+  common:
+    edit: Edit
+    delete: Delete
+    remove: Remove
+
+  pundit:
+    not_authorized: You are not authorized to do that.
+
+  activerecord:
+    attributes:
+      school_class:
+        name: Name
+      student:
+        first_name: First name
+        last_name: Last name
+        birth_date: Birth date
+      test:
+        title: Title
+        locale: Locale
+      question:
+        body: Question
+        answer_type: Answer type
+        points: Points
+        correct_answer: "Correct answer (short_text only)"
+
+  dashboard:
+    show:
+      title: Dashboard
+      school_classes: School classes
+      students_count: "%{count} students"
+      new_school_class: New school class
+      my_tests: My tests
+      new_test: New test
+
+  school_classes:
+    index:
+      title: School classes
+    show:
+      delete_confirm: Delete this school class and all its students?
+      students: Students
+      add_student: Add student
+      remove_confirm: "Remove %{name}?"
+      assigned_tests: Assigned tests
+    new:
+      title: New school class
+    edit:
+      title: Edit school class
+    create:
+      success: School class created.
+    update:
+      success: School class updated.
+    destroy:
+      success: School class deleted.
+
+  students:
+    new:
+      title: "Add student to %{class_name}"
+    edit:
+      title: Edit student
+    create:
+      success: Student added.
+    update:
+      success: Student updated.
+    destroy:
+      success: Student removed.
+
+  tests:
+    index:
+      title: My tests
+    show:
+      delete_confirm: Delete this test and all its questions?
+      questions: Questions
+      add_question: Add question
+      delete_question_confirm: Delete this question?
+      assigned_classes: Assigned classes
+      assign_to_class: Assign to a class
+      view_qr: View QR code
+      unassign: Unassign
+      unassign_confirm: "Unassign %{class_name}?"
+      results: Results
+      view_results: View results
+    new:
+      title: New test
+    edit:
+      title: Edit test
+    create:
+      success: Test created.
+    update:
+      success: Test updated.
+    destroy:
+      success: Test deleted.
+
+  questions:
+    new:
+      title: "New question for %{test_title}"
+    edit:
+      title: Edit question
+    create:
+      success: Question added.
+    update:
+      success: Question updated.
+    destroy:
+      success: Question deleted.
+    form:
+      options_legend: "Options (multiple_choice only)"
+      option_placeholder: Option text
+      correct: Correct
+
+  test_assignments:
+    new:
+      title: "Assign \"%{test_title}\" to a class"
+      school_class: School class
+      assign: Assign
+    show:
+      pick_yourself: Find your name
+    create:
+      success: Test assigned to class.
+    destroy:
+      success: Class unassigned.
+
+  student_passcodes:
+    new:
+      title: "Hi, %{name}!"
+      hint: Enter your birthday as day and month (DDMM), e.g. 0703 for March 7.
+      passcode_label: Passcode
+      submit: Continue
+    create:
+      invalid_passcode: That doesn't match — try again.
+
+  test_attempts:
+    show:
+      submit: Submit
+      completed_headline: "Nice work — you're done!"
+      completed_note: You can close this page now. Your teacher will see the result.
+
+  attempts:
+    index:
+      title: "Results — %{test_title}"
+      status: Status
+      score: Score
+      grade: Grade
+      view: View
+    show:
+      question: Question
+      answer: Answer
+      correct_answer: Correct answer
+      points: Points
+      override: Override
+      teacher_overridden: overridden
+      save: Save
+
+  responses:
+    update:
+      success: Points updated.

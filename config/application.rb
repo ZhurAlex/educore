@@ -12,7 +12,8 @@ require "action_controller/railtie"
 # require "action_text/engine"
 require "action_view/railtie"
 # require "action_cable/engine"
-require "rails/test_unit/railtie"
+# Not using Test::Unit/minitest — this project uses RSpec (see docs/SPEC.md
+# Tech Stack).
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -38,5 +39,19 @@ module Educore
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # MVP locales — see docs/SPEC.md Decision #5. UI chrome only, never test
+    # content (Question/Test bodies stay in whatever language they were
+    # authored in — see docs/SPEC.md I18n section).
+    config.i18n.available_locales = [:uk, :ru, :en]
+    config.i18n.default_locale = :uk
+    # Anything not (yet) translated in uk/ru falls back to en rather than
+    # rendering "translation missing" — most relevant for Devise's own copy
+    # (sign in/password reset) and Rails' built-in ActiveRecord error
+    # messages, neither of which are hand-translated here. `true` alone
+    # would make the fallback chain default to *default_locale* (uk), which
+    # doesn't help since uk has no built-in Rails strings either — the
+    # explicit [:en] is what actually gets to a locale with those strings.
+    config.i18n.fallbacks = [:en]
   end
 end

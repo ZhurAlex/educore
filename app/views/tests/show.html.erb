@@ -1,0 +1,39 @@
+<h1><%= @test.title %></h1>
+<p><%= Test.human_attribute_name(:locale) %>: <%= @test.locale %></p>
+
+<%= link_to t("common.edit"), edit_test_path(@test) %>
+<%= button_to t("common.delete"), test_path(@test), method: :delete,
+      form: { data: { turbo_confirm: t(".delete_confirm") } } %>
+
+<h2><%= t(".questions") %></h2>
+<ul>
+  <% @questions.each do |question| %>
+    <li>
+      <%= question.body %> (<%= question.answer_type %>, <%= question.points %> pts)
+      <%= link_to t("common.edit"), edit_question_path(question) %>
+      <%= button_to t("common.delete"), question_path(question), method: :delete,
+            form: { data: { turbo_confirm: t(".delete_question_confirm") } } %>
+    </li>
+  <% end %>
+</ul>
+<%= link_to t(".add_question"), new_test_question_path(@test) %>
+
+<h2><%= t(".assigned_classes") %></h2>
+<ul>
+  <% @test.test_assignments.includes(:school_class).each do |assignment| %>
+    <li>
+      <%= assignment.school_class.name %>
+      <%= button_to t(".unassign"), test_assignment_path(assignment), method: :delete,
+            form: { data: { turbo_confirm: t(".unassign_confirm", class_name: assignment.school_class.name) } } %>
+      <details>
+        <summary><%= t(".view_qr") %></summary>
+        <%= raw RQRCode::QRCode.new(test_assignment_url(assignment)).as_svg(module_size: 4, use_path: true, standalone: true) %>
+        <p><%= test_assignment_url(assignment) %></p>
+      </details>
+    </li>
+  <% end %>
+</ul>
+<%= link_to t(".assign_to_class"), new_test_test_assignment_path(@test) %>
+
+<h2><%= t(".results") %></h2>
+<%= link_to t(".view_results"), test_attempts_path(@test) %>

@@ -1,0 +1,25 @@
+<h1><%= @school_class.name %></h1>
+
+<%= link_to t("common.edit"), edit_school_class_path(@school_class) %>
+<%= button_to t("common.delete"), school_class_path(@school_class), method: :delete,
+      form: { data: { turbo_confirm: t(".delete_confirm") } } %>
+
+<h2><%= t(".students") %></h2>
+<ul>
+  <% @students.each do |student| %>
+    <li>
+      <%= student.full_name %> (<%= student.birth_date %>)
+      <%= link_to t("common.edit"), edit_student_path(student) %>
+      <%= button_to t("common.remove"), student_path(student), method: :delete,
+            form: { data: { turbo_confirm: t(".remove_confirm", name: student.full_name) } } %>
+    </li>
+  <% end %>
+</ul>
+<%= link_to t(".add_student"), new_school_class_student_path(@school_class) %>
+
+<h2><%= t(".assigned_tests") %></h2>
+<ul>
+  <% @school_class.test_assignments.includes(:test).each do |assignment| %>
+    <li><%= assignment.test.title %></li>
+  <% end %>
+</ul>

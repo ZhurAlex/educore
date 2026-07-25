@@ -2,14 +2,349 @@
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
  *
- * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
- * vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- *= require_tree .
  *= require_self
  */
+
+:root {
+  --color-bg: #f7f7fb;
+  --color-surface: #ffffff;
+  --color-border: #e2e2ea;
+  --color-text: #1f2430;
+  --color-text-muted: #6b7280;
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-danger: #dc2626;
+  --color-danger-bg: #fef2f2;
+  --color-success-bg: #ecfdf5;
+  --color-success-text: #065f46;
+  --color-alert-bg: #fef2f2;
+  --color-alert-text: #991b1b;
+  --radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+h1, h2, h3 {
+  line-height: 1.25;
+  margin-top: 0;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.15rem;
+  margin-top: 2rem;
+  color: var(--color-text-muted);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Layout */
+
+nav {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.nav-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.nav-links .brand {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+
+section {
+  margin-bottom: 2rem;
+}
+
+/* Flash messages */
+
+.flash {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+}
+
+.flash-notice {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.flash-alert {
+  background: var(--color-alert-bg);
+  color: var(--color-alert-text);
+}
+
+/* Buttons & button-like links */
+
+.button_to {
+  display: inline;
+}
+
+input[type="submit"],
+button,
+.link-button {
+  font: inherit;
+  cursor: pointer;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+input[type="submit"]:hover,
+button:hover,
+.link-button:hover {
+  background: var(--color-primary-hover);
+  text-decoration: none;
+}
+
+/* Destructive actions (delete/remove/unassign) all carry a turbo_confirm
+   dialog — used here as the hook for danger styling. */
+form[data-turbo-confirm] input[type="submit"] {
+  background: transparent;
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+}
+
+form[data-turbo-confirm] input[type="submit"]:hover {
+  background: var(--color-danger-bg);
+}
+
+.locale-switcher {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.locale-switcher input[type="submit"] {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.locale-switcher .current input[type="submit"] {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+/* Forms */
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 32rem;
+}
+
+form div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="number"],
+select,
+textarea {
+  font: inherit;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+form ul {
+  color: var(--color-danger);
+  font-size: 0.9rem;
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+fieldset {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+legend {
+  font-weight: 600;
+  padding: 0 0.4rem;
+}
+
+/* Lists as record listings */
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+section > ul li,
+.container > ul li {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Tables (results screens) */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.9rem;
+}
+
+th {
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.badge {
+  display: inline-block;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+  font-size: 0.75rem;
+  margin-left: 0.4rem;
+}
+
+/* QR code */
+
+.qr-code svg {
+  max-width: 220px;
+  height: auto;
+}
+
+details {
+  margin-top: 0.5rem;
+}
+
+summary {
+  cursor: pointer;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+}
+
+/* Student results card */
+
+.results-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  max-width: 24rem;
+  margin: 2rem auto 0;
+}
+
+.results-headline {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+}
+
+.results-score {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  margin: 0 0 1rem;
+}
+
+.results-score strong {
+  display: block;
+  font-size: 1.75rem;
+  color: var(--color-primary);
+}
+
+.results-note {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}

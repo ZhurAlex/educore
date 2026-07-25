@@ -1,0 +1,9 @@
+<h1><%= t(".title") %></h1>
+
+<ul>
+  <% @tests.each do |test| %>
+    <li><%= link_to test.title, test %> (<%= test.locale %>)</li>
+  <% end %>
+</ul>
+
+<%= link_to t("dashboard.show.new_test"), new_test_path %>

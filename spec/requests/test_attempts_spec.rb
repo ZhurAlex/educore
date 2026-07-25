@@ -1,0 +1,70 @@
+require 'rails_helper'
+
+RSpec.describe "TestAttempts", type: :request do
+  let(:school_class) { create(:school_class) }
+  let(:student) { create(:student, school_class: school_class, birth_date: Date.new(2013, 3, 7)) }
+  let(:test) { create(:test) }
+  let(:assignment) { create(:test_assignment, test: test, school_class: school_class) }
+
+  def sign_in_as_student!
+    post student_passcode_path(assignment, student), params: { passcode: "0703" }
+    TestAttempt.last
+  end
+
+  describe "GET /test_attempts/:id" do
+    it "renders the question form for the owning student" do
+      attempt = sign_in_as_student!
+
+      get test_attempt_path(attempt)
+
+      expect(response).to have_http_status(:success)
+    end
+
+    it "is forbidden for a visitor without the matching session" do
+      attempt = create(:test_attempt, student: student, test: test)
+
+      get test_attempt_path(attempt)
+
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
+  describe "PATCH /test_attempts/:id" do
+    it "grades answers, completes the attempt, and redirects (Turbo Drive needs a redirect after a form POST)" do
+      mc_question = create(:question, :multiple_choice, test: test, points: 1)
+      correct_option = mc_question.options.find(&:correct?)
+      st_question = create(:question, test: test, answer_type: :short_text, correct_answer: "Paris", points: 2)
+
+      attempt = sign_in_as_student!
+
+      patch test_attempt_path(attempt), params: {
+        answers: {
+          mc_question.id.to_s => { option_id: correct_option.id },
+          st_question.id.to_s => { answer_text: "paris" }
+        }
+      }
+
+      expect(response).to redirect_to(test_attempt_path(attempt))
+
+      attempt.reload
+      expect(attempt).to be_completed
+      expect(attempt.score).to eq(3)
+      expect(attempt.grade).to eq(3)
+      expect(attempt.responses.count).to eq(2)
+    end
+
+    it "lets the student view their result once, then clears the session (Decision #14)" do
+      attempt = sign_in_as_student!
+      patch test_attempt_path(attempt), params: { answers: {} }
+
+      # first view after completion still has the session — succeeds
+      get test_attempt_path(attempt)
+      expect(response).to have_http_status(:success)
+      expect(response.body).to match(/Бали/)
+
+      # a later visit (e.g. next student scanning the same device) is not
+      get test_attempt_path(attempt)
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+end

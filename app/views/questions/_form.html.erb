@@ -1,0 +1,48 @@
+<%= form_with model: question, url: url do |form| %>
+  <% if question.errors.any? %>
+    <ul>
+      <% question.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <%= form.label :body %>
+    <%= form.text_area :body %>
+  </div>
+
+  <div>
+    <%= form.label :answer_type %>
+    <%= form.select :answer_type, Question.answer_types.keys %>
+  </div>
+
+  <div>
+    <%= form.label :points %>
+    <%= form.number_field :points, step: 0.5, min: 0.5 %>
+  </div>
+
+  <div>
+    <%= form.label :correct_answer %>
+    <%= form.text_field :correct_answer %>
+  </div>
+
+  <fieldset>
+    <legend><%= t("questions.form.options_legend") %></legend>
+    <%= form.fields_for :options do |option_form| %>
+      <div>
+        <%= option_form.text_field :body, placeholder: t("questions.form.option_placeholder") %>
+        <%= option_form.label :correct do %>
+          <%= option_form.check_box :correct %> <%= t("questions.form.correct") %>
+        <% end %>
+        <% if option_form.object.persisted? %>
+          <%= option_form.label :_destroy do %>
+            <%= option_form.check_box :_destroy %> <%= t("common.remove") %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </fieldset>
+
+  <%= form.submit %>
+<% end %>

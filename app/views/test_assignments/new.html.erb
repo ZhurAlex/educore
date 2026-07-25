@@ -1,0 +1,18 @@
+<h1><%= t(".title", test_title: @test.title) %></h1>
+
+<%= form_with model: @test_assignment, url: test_test_assignments_path(@test) do |form| %>
+  <% if @test_assignment.errors.any? %>
+    <ul>
+      <% @test_assignment.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <%= form.label :school_class_id, t(".school_class") %>
+    <%= form.collection_select :school_class_id, @available_school_classes, :id, :name %>
+  </div>
+
+  <%= form.submit t(".assign") %>
+<% end %>
