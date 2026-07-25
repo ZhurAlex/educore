@@ -39,6 +39,10 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
 
+  # binding.pry — step commands (next/step/continue) need pry-byebug on top
+  gem "pry-rails"
+  gem "pry-byebug"
+
   # Load .env into ENV for local dev/test (Postgres runs in docker-compose)
   gem "dotenv-rails"
 
