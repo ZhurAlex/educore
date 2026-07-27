@@ -72,4 +72,26 @@ RSpec.describe Question, type: :model do
       end
     end
   end
+
+  describe "#destroy" do
+    it "doesn't raise when an option is still referenced by a graded response" do
+      question = create(:question, :multiple_choice)
+      correct_option = question.options.find(&:correct?)
+      attempt = create(:test_attempt, test: question.test)
+      create(:response, test_attempt: attempt, question: question, option: correct_option, points_awarded: question.points)
+
+      expect { question.destroy }.not_to raise_error
+      expect(Question.exists?(question.id)).to be false
+      expect(Option.exists?(correct_option.id)).to be false
+    end
+
+    it "doesn't raise when the question is destroyed via its parent Test" do
+      question = create(:question, :multiple_choice)
+      correct_option = question.options.find(&:correct?)
+      attempt = create(:test_attempt, test: question.test)
+      create(:response, test_attempt: attempt, question: question, option: correct_option, points_awarded: question.points)
+
+      expect { question.test.destroy }.not_to raise_error
+    end
+  end
 end

@@ -3,8 +3,8 @@ class Question < ApplicationRecord
   enum answer_type: { multiple_choice: 0, short_text: 1 }
 
   belongs_to :test
-  has_many :options, dependent: :destroy
   has_many :responses, dependent: :destroy
+  has_many :options, dependent: :destroy
 
   accepts_nested_attributes_for :options, allow_destroy: true, reject_if: :all_blank
 
