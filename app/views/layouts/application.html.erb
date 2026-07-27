@@ -10,7 +10,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body class="<%= "auth-page" if devise_controller? %>">
     <% if teacher_signed_in? %>
       <nav>
         <div class="nav-inner">

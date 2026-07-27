@@ -182,10 +182,26 @@ form {
   max-width: 32rem;
 }
 
-form div {
+/* A single label-above-input group (text fields, selects, textareas) */
+.field {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+}
+
+/* A radio/checkbox next to its own label, side by side (multiple_choice
+   options — both picking one as a student and editing them as a teacher) */
+.option-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.option-row label {
+  font-weight: 400;
+  color: var(--color-text);
 }
 
 label {
@@ -214,6 +230,13 @@ select:focus,
 textarea:focus {
   outline: 2px solid var(--color-primary);
   outline-offset: 1px;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--color-primary);
 }
 
 form ul {
@@ -347,4 +370,97 @@ summary {
   color: var(--color-text-muted);
   font-size: 0.9rem;
   margin: 0;
+}
+
+/* Auth pages (Devise: sessions, passwords) — a centered card instead of
+   the regular left-aligned admin layout. */
+
+.auth-page {
+  background: linear-gradient(160deg, #eef0ff 0%, var(--color-bg) 45%);
+  min-height: 100vh;
+}
+
+.auth-page .container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.auth-page .flash {
+  width: 100%;
+  max-width: 22rem;
+}
+
+.auth-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px -20px rgba(31, 36, 48, 0.25);
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 22rem;
+}
+
+.auth-brand {
+  display: block;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-text);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.auth-card h2 {
+  font-size: 1.3rem;
+  text-align: center;
+  margin: 0 0 1.5rem;
+}
+
+.auth-card form {
+  max-width: none;
+}
+
+.auth-card .field input {
+  width: 100%;
+}
+
+.auth-card .actions input[type="submit"] {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  margin-top: 0.5rem;
+}
+
+.auth-links {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.auth-links p {
+  margin: 0.4rem 0;
+}
+
+#error_explanation {
+  background: var(--color-alert-bg);
+  color: var(--color-alert-text);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+#error_explanation h2 {
+  font-size: 0.95rem;
+  margin: 0 0 0.4rem;
+  text-align: left;
+}
+
+#error_explanation ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: inherit;
 }
