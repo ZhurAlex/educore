@@ -74,10 +74,6 @@ RSpec.describe Question, type: :model do
   end
 
   describe "#destroy" do
-    # Regression test for issue #11: Option and Response were destroyed in
-    # an order that violated Response#option_id's foreign key (Options were
-    # destroyed before the Responses still pointing at them). Fixed by
-    # declaring `has_many :responses` before `has_many :options` on Question.
     it "doesn't raise when an option is still referenced by a graded response" do
       question = create(:question, :multiple_choice)
       correct_option = question.options.find(&:correct?)
