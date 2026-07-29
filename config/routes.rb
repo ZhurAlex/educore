@@ -40,4 +40,8 @@ Rails.application.routes.draw do
     to: "student_passcodes#create"
 
   resources :test_attempts, only: [:show, :update]
+
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
 end
