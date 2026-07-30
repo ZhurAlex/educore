@@ -31,9 +31,8 @@ gem "pundit"
 # QR code generation for TestAssignment links
 gem "rqrcode"
 
-# Sidekiq (background jobs) intentionally not added yet — MVP has nothing
-# that needs it (long_text/LLM grading is deferred, see docs/SPEC.md
-# Decision #12). Add it back when that work starts.
+gem "sidekiq", "~> 7.3"
+gem "connection_pool", "~> 2.5"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
