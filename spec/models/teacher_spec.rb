@@ -22,4 +22,10 @@ RSpec.describe Teacher, type: :model do
   it "is not registerable — registration is closed (see docs/SPEC.md Decision #11)" do
     expect(Teacher.devise_modules).not_to include(:registerable)
   end
+
+  it "sends devise notifications asynchronously" do
+    teacher = build(:teacher)
+    expect { teacher.send_reset_password_instructions }
+    .to have_enqueued_job(ActionMailer::MailDeliveryJob)
+  end
 end

@@ -10,9 +10,14 @@ Full design rationale and decisions log: [docs/SPEC.md](docs/SPEC.md).
 ## Tech stack
 
 - Ruby 3.3.0 / Rails 7.1
-- PostgreSQL (via Docker Compose for local dev)
+- PostgreSQL + Redis (both via Docker Compose for local dev)
+- Sidekiq — background jobs (currently: sending Devise emails via `deliver_later`,
+  so a slow mail send doesn't block the request; see SPEC's "Later" section
+  for the next thing it'll carry — LLM grading)
 - Hotwire (Turbo + Stimulus), Sprockets — no JS framework, no bundler
 - Devise (teacher auth — registration is closed, see SPEC Decision #11) + Pundit
+- ActionMailer + `letter_opener_web` — emails are never really sent in dev;
+  view them at `/letter_opener` instead
 - RSpec + FactoryBot + Faker
 - I18n: `uk` (default), `ru`, `en` — UI chrome only, see SPEC's I18n section
 
@@ -24,8 +29,8 @@ Full design rationale and decisions log: [docs/SPEC.md](docs/SPEC.md).
 asdf install                    # ruby 3.3.0, from .tool-versions
 bundle install
 
-cp .env.example .env            # Postgres credentials for docker-compose
-docker compose up -d db
+cp .env.example .env            # Postgres + Redis config for docker-compose
+docker compose up -d             # Postgres + Redis
 
 bin/rails db:prepare             # creates + migrates development and test DBs
 bin/rails db:seed                # creates the teacher account + demo data (dev only)
@@ -39,14 +44,23 @@ bin/rails db:seed                # creates the teacher account + demo data (dev 
 
 ## Running
 
+Three things need to be running at once — Postgres/Redis (Docker), the Rails
+server, and the Sidekiq worker (separate process, not part of `rails server`):
+
 ```bash
-bin/rails server
+docker compose up -d       # if not already running
+bin/rails server           # terminal 1
+bundle exec sidekiq        # terminal 2 — without this, background jobs
+                           # (e.g. password reset emails) queue up and never run
 ```
 
 Visit `http://localhost:3000` and sign in with the seeded teacher account
 above. From there: create school classes and students, build a test,
 assign it to a class, and open the QR code shown on the test's page — that
 same link is what a student's phone lands on.
+
+Emails (e.g. "Forgot your password?") are never actually sent in
+development — view them at `http://localhost:3000/letter_opener` instead.
 
 ## Testing
 
