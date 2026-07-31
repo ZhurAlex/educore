@@ -13,7 +13,17 @@ en:
   pundit:
     not_authorized: You are not authorized to do that.
 
+  helpers:
+    submit:
+      create: "Create %{model}"
+      update: "Update %{model}"
+
   activerecord:
+    models:
+      school_class: School class
+      student: Student
+      test: Test
+      question: Question
     attributes:
       school_class:
         name: Name

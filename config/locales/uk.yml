@@ -13,7 +13,17 @@ uk:
   pundit:
     not_authorized: У вас немає прав для цієї дії.
 
+  helpers:
+    submit:
+      create: "Створити %{model}"
+      update: "Оновити %{model}"
+
   activerecord:
+    models:
+      school_class: Клас
+      student: Учень
+      test: Тест
+      question: Питання
     attributes:
       school_class:
         name: Назва
