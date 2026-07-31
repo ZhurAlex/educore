@@ -1,6 +1,6 @@
 class QuestionsController < ApplicationController
-  before_action :set_test, only: [:new, :create]
-  before_action :set_question, only: [:edit, :update, :destroy]
+  before_action :set_test, only: [ :new, :create ]
+  before_action :set_question, only: [ :edit, :update, :destroy ]
 
   def new
     @question = @test.questions.new
@@ -54,7 +54,7 @@ class QuestionsController < ApplicationController
   def question_params
     params.require(:question).permit(
       :body, :answer_type, :points, :correct_answer,
-      options_attributes: [:id, :body, :correct, :_destroy]
+      options_attributes: [ :id, :body, :correct, :_destroy ]
     )
   end
 end

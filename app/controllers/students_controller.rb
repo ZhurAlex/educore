@@ -1,6 +1,6 @@
 class StudentsController < ApplicationController
-  before_action :set_school_class, only: [:new, :create]
-  before_action :set_student, only: [:edit, :update, :destroy]
+  before_action :set_school_class, only: [ :new, :create ]
+  before_action :set_student, only: [ :edit, :update, :destroy ]
 
   def new
     authorize Student

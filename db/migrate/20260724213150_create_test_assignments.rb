@@ -7,6 +7,6 @@ class CreateTestAssignments < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    add_index :test_assignments, [:test_id, :school_class_id], unique: true
+    add_index :test_assignments, [ :test_id, :school_class_id ], unique: true
   end
 end

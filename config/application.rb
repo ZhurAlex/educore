@@ -27,7 +27,7 @@ module Educore
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w(assets tasks))
+    config.autoload_lib(ignore: %w[assets tasks])
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -43,7 +43,7 @@ module Educore
     # MVP locales — see docs/SPEC.md Decision #5. UI chrome only, never test
     # content (Question/Test bodies stay in whatever language they were
     # authored in — see docs/SPEC.md I18n section).
-    config.i18n.available_locales = [:uk, :ru, :en]
+    config.i18n.available_locales = [ :uk, :ru, :en ]
     config.i18n.default_locale = :uk
     # Anything not (yet) translated in uk/ru falls back to en rather than
     # rendering "translation missing" — most relevant for Devise's own copy
@@ -52,8 +52,7 @@ module Educore
     # would make the fallback chain default to *default_locale* (uk), which
     # doesn't help since uk has no built-in Rails strings either — the
     # explicit [:en] is what actually gets to a locale with those strings.
-    config.i18n.fallbacks = [:en]
+    config.i18n.fallbacks = [ :en ]
     config.active_job.queue_adapter = :sidekiq
-
   end
 end

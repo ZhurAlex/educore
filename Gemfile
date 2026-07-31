@@ -45,15 +45,18 @@ group :development, :test do
   # Load .env into ENV for local dev/test (Postgres runs in docker-compose)
   gem "dotenv-rails"
 
+  # Lint/style checks (see docs/SPEC.md issue #17) — Rails' own default preset
+  gem "rubocop-rails-omakase", require: false
+
   # Testing (see docs/SPEC.md Tech Stack)
   gem "rspec-rails"
   gem "factory_bot_rails"
   gem "faker"
   gem "letter_opener_web"
+  gem "simplecov", require: false
 end
 
 group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 end
-
