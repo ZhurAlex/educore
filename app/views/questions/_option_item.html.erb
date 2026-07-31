@@ -1,0 +1,9 @@
+<%= option_form.text_field :body, placeholder: t("questions.form.option_placeholder") %>
+<%= option_form.label :correct do %>
+    <%= option_form.check_box :correct %> <%= t("questions.form.correct") %>
+<% end %>
+<% if option_form.object.persisted? %>
+    <%= option_form.label :_destroy do %>
+    <%= option_form.check_box :_destroy %> <%= t("common.remove") %>
+    <% end %>
+<% end %>

@@ -112,6 +112,7 @@ uk:
       options_legend: "Варіанти відповіді (лише multiple_choice)"
       option_placeholder: Текст варіанту
       correct: Правильний
+      add_option: Додати варіант
 
   test_assignments:
     new:

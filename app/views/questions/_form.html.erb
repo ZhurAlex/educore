@@ -1,4 +1,4 @@
-<%= form_with model: question, url: url do |form| %>
+<%= form_with model: question, url: url, data: { controller: "question" } do |form| %>
   <% if question.errors.any? %>
     <ul>
       <% question.errors.full_messages.each do |message| %>
@@ -14,7 +14,7 @@
 
   <div>
     <%= form.label :answer_type %>
-    <%= form.select :answer_type, Question.answer_types.keys %>
+    <%= form.select :answer_type, Question.answer_types.keys, {}, data: { action: "question#showFields", question_target: "answerTypes" } %>
   </div>
 
   <div>
@@ -22,26 +22,29 @@
     <%= form.number_field :points, step: 0.5, min: 0.5 %>
   </div>
 
-  <div>
+  <div data-question-target="correctAnswer">
     <%= form.label :correct_answer %>
     <%= form.text_field :correct_answer %>
   </div>
 
-  <fieldset>
+  <fieldset data-question-target="optionsContainer">
     <legend><%= t("questions.form.options_legend") %></legend>
-    <%= form.fields_for :options do |option_form| %>
-      <div>
-        <%= option_form.text_field :body, placeholder: t("questions.form.option_placeholder") %>
-        <%= option_form.label :correct do %>
-          <%= option_form.check_box :correct %> <%= t("questions.form.correct") %>
-        <% end %>
-        <% if option_form.object.persisted? %>
-          <%= option_form.label :_destroy do %>
-            <%= option_form.check_box :_destroy %> <%= t("common.remove") %>
-          <% end %>
+      <div data-question-target="optionsList">
+        <%= form.fields_for :options do |option_form| %>
+          <div>
+            <%= render "option_item", option_form: option_form %>
+          </div>
         <% end %>
       </div>
-    <% end %>
+      <%# This is a template for adding new options for Stimulus %>
+      <template data-question-target="template">
+        <div>
+          <%= form.fields_for :options, Option.new, child_index: "NEW_RECORD" do |option_form| %>
+            <%= render "option_item", option_form: option_form %>
+          <% end %>
+        </div>
+      </template>
+    <button type="button" data-action="question#addOption"><%= t("questions.form.add_option") %></button>
   </fieldset>
 
   <%= form.submit %>
