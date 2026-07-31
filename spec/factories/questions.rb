@@ -10,9 +10,9 @@ FactoryBot.define do
       answer_type { :multiple_choice }
       correct_answer { nil }
 
-      after(:create) do |question|
-        create(:option, question: question, correct: true)
-        create(:option, question: question, correct: false)
+      after(:build) do |question|
+        question.options.build(body: "Correct answer", correct: true)
+        question.options.build(body: "Incorrect answer", correct: false)
       end
     end
   end
