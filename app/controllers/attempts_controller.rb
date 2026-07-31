@@ -1,6 +1,6 @@
 class AttemptsController < ApplicationController
-  before_action :set_test, only: [:index]
-  before_action :set_attempt, only: [:show]
+  before_action :set_test, only: [ :index ]
+  before_action :set_attempt, only: [ :show ]
 
   def index
     # Explicit :show? — a bare `authorize @test` here would resolve to

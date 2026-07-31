@@ -14,7 +14,7 @@ class CreateTestAttempts < ActiveRecord::Migration[7.1]
 
     # Decision #2 (docs/SPEC.md): one active (in_progress) attempt per
     # (student, test) — status 0 is in_progress (see TestAttempt enum).
-    add_index :test_attempts, [:student_id, :test_id], unique: true,
+    add_index :test_attempts, [ :student_id, :test_id ], unique: true,
       where: "status = 0", name: "index_test_attempts_on_active_student_test"
   end
 end

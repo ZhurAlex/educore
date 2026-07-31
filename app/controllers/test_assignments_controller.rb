@@ -2,12 +2,12 @@ class TestAssignmentsController < ApplicationController
   # :show is the public QR-code target — see routes.rb. Locale there comes
   # from the Test itself (docs/SPEC.md Decision #8), not the teacher's
   # session, so it needs its own locale handling instead of the parent's.
-  skip_before_action :authenticate_teacher!, only: [:show]
-  skip_around_action :switch_locale, only: [:show]
-  around_action :switch_locale_to_test, only: [:show]
+  skip_before_action :authenticate_teacher!, only: [ :show ]
+  skip_around_action :switch_locale, only: [ :show ]
+  around_action :switch_locale_to_test, only: [ :show ]
 
-  before_action :set_test, only: [:new, :create]
-  before_action :set_test_assignment, only: [:show, :destroy]
+  before_action :set_test, only: [ :new, :create ]
+  before_action :set_test_assignment, only: [ :show, :destroy ]
 
   def new
     @test_assignment = @test.test_assignments.new
