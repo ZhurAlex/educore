@@ -112,6 +112,7 @@ en:
       options_legend: "Options (multiple_choice only)"
       option_placeholder: Option text
       correct: Correct
+      add_option: Add option
 
   test_assignments:
     new:

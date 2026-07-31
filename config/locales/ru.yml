@@ -112,6 +112,7 @@ ru:
       options_legend: "Варианты ответа (только multiple_choice)"
       option_placeholder: Текст варианта
       correct: Правильный
+      add_option: Добавить вариант
 
   test_assignments:
     new:

@@ -5,7 +5,6 @@ class QuestionsController < ApplicationController
   def new
     @question = @test.questions.new
     authorize @question
-    2.times { @question.options.build }
   end
 
   def create
@@ -21,7 +20,6 @@ class QuestionsController < ApplicationController
 
   def edit
     authorize @question
-    @question.options.build if @question.options.empty?
   end
 
   def update
