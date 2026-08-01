@@ -27,14 +27,15 @@ if Rails.env.development?
   end
 
   if test.questions.empty?
-    multiple_choice = test.questions.create!(
+    multiple_choice = test.questions.new(
       body: "Which word means 'house'?",
       answer_type: :multiple_choice,
       points: 1
     )
-    multiple_choice.options.create!(body: "Home", correct: true)
-    multiple_choice.options.create!(body: "Car", correct: false)
-    multiple_choice.options.create!(body: "Tree", correct: false)
+    multiple_choice.options.build(body: "Home", correct: true)
+    multiple_choice.options.build(body: "Car", correct: false)
+    multiple_choice.options.build(body: "Tree", correct: false)
+    multiple_choice.save!
 
     test.questions.create!(
       body: "Translate: \"Дякую\"",
@@ -48,3 +49,66 @@ if Rails.env.development?
 
   puts "Seeded: #{school_class.name} (#{school_class.students.count} students), test \"#{test.title}\""
 end
+
+# Avengers-themed demo classes/test — seeded in every environment (including
+# production) so the live deploy has something real to click through.
+avengers = [
+  [ "Tony", "Stark" ], [ "Steve", "Rogers" ], [ "Natasha", "Romanoff" ],
+  [ "Bruce", "Banner" ], [ "Thor", "Odinson" ], [ "Clint", "Barton" ],
+  [ "Wanda", "Maximoff" ], [ "Peter", "Parker" ], [ "Carol", "Danvers" ],
+  [ "Scott", "Lang" ]
+]
+
+avenger_classes = [ "1-A", "1-B" ].map { |name| SchoolClass.find_or_create_by!(name: name) }
+
+avenger_classes.each_with_index do |avenger_class, class_index|
+  next unless avenger_class.students.empty?
+
+  avengers[class_index * 5, 5].each do |first_name, last_name|
+    avenger_class.students.create!(
+      first_name: first_name,
+      last_name: last_name,
+      birth_date: (rand(6..7).years.ago - rand(365).days).to_date
+    )
+  end
+end
+
+math_test = teacher.tests.find_or_create_by!(title: "Math: Basic Arithmetic") do |t|
+  t.locale = "en"
+end
+
+if math_test.questions.empty?
+  [
+    [ "How much is 2 + 2?", "4", "3", "5" ],
+    [ "How much is 5 - 3?", "2", "1", "3" ],
+    [ "How much is 3 + 4?", "7", "6", "8" ],
+    [ "Which number is bigger: 8 or 5?", "8", "5", "they are equal" ],
+    [ "How much is 10 - 6?", "4", "3", "5" ]
+  ].each do |body, correct, wrong_a, wrong_b|
+    # Options must exist before the question itself is saved — the
+    # "exactly one correct option" validation on Question checks at
+    # save time, so `create!` on an empty question would fail here.
+    question = math_test.questions.new(body: body, answer_type: :multiple_choice, points: 1)
+    question.options.build(body: correct, correct: true)
+    question.options.build(body: wrong_a, correct: false)
+    question.options.build(body: wrong_b, correct: false)
+    question.save!
+  end
+
+  [
+    [ "How much is 1 + 1?", "2" ],
+    [ "How much is 6 + 3?", "9" ],
+    [ "How much is 9 - 4?", "5" ],
+    [ "How many fingers are on one hand?", "5" ],
+    [ "How much is 7 + 2?", "9" ]
+  ].each do |body, answer|
+    math_test.questions.create!(body: body, answer_type: :short_text, points: 1, correct_answer: answer)
+  end
+end
+
+avenger_classes.each do |avenger_class|
+  TestAssignment.find_or_create_by!(test: math_test, school_class: avenger_class)
+end
+
+puts "Seeded: #{avenger_classes.map { |c| "#{c.name} (#{c.students.count} students)" }.join(', ')}, " \
+     "test \"#{math_test.title}\" (#{math_test.questions.count} questions)"
