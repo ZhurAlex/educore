@@ -18,8 +18,12 @@ Full design rationale and decisions log: [docs/SPEC.md](docs/SPEC.md).
 - Devise (teacher auth — registration is closed, see SPEC Decision #11) + Pundit
 - ActionMailer + `letter_opener_web` — emails are never really sent in dev;
   view them at `/letter_opener` instead
-- RSpec + FactoryBot + Faker
+- RSpec + FactoryBot + Faker, coverage tracked with SimpleCov
+- RuboCop (`rubocop-rails-omakase`) — lint/style, runs in CI as a separate
+  job from the test suite
 - I18n: `uk` (default), `ru`, `en` — UI chrome only, see SPEC's I18n section
+- GitHub Actions CI — runs RSpec and RuboCop on every push/PR (see
+  `.github/workflows/ci.yml`)
 
 ## Setup
 
@@ -65,7 +69,8 @@ development — view them at `http://localhost:3000/letter_opener` instead.
 ## Testing
 
 ```bash
-bundle exec rspec
+bundle exec rspec        # runs the suite, generates a SimpleCov report at coverage/index.html
+bundle exec rubocop      # lint/style — same check CI runs
 ```
 
 ## Project structure notes
