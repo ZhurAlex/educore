@@ -1,3 +1,10 @@
+# DEMO
+You could test this project on:
+https://educore-gdt0.onrender.com/
+(Pay attention that it is free-hosted, so it takes about 50 seconds to wake up after the first request)
+- email: `teacher@example.com`
+- password: `password123`
+  
 # Educore
 
 A student testing app for the classroom: a teacher builds tests, assigns
