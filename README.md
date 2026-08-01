@@ -5,6 +5,9 @@ so the first request may take up to 50 seconds to wake the service up.
 
 - email: `teacher@example.com`
 - password: `password123`
+
+Registration is closed (single-teacher portfolio project) — use the demo
+account above to sign in.
   
 # Educore
 
