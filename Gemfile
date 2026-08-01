@@ -24,6 +24,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # Teacher authentication
 gem "devise"
+gem "devise-i18n"
 
 # Teacher-side authorization (own tests only — see docs/SPEC.md Ownership model)
 gem "pundit"
