@@ -19,7 +19,7 @@
       </fieldset>
     <% end %>
 
-    <%= form.submit t(".submit") %>
+    <%= form.submit t(".submit"), data: { turbo_confirm: t(".confirm_submit") } %>
   <% end %>
 <% else %>
   <div class="results-card">

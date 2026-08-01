@@ -9,20 +9,18 @@ RSpec.describe Response, type: :model do
     expect(build(:response, :multiple_choice)).to be_valid
   end
 
-  it "requires an option for a multiple_choice question" do
+  it "allows a blank option for a multiple_choice question (Decision #13: a skipped answer scores 0, not an error)" do
     question = create(:question, :multiple_choice)
     response = build(:response, question: question, option: nil, answer_text: nil)
 
-    expect(response).not_to be_valid
-    expect(response.errors[:option]).to be_present
+    expect(response).to be_valid
   end
 
-  it "requires answer_text for a short_text question" do
+  it "allows a blank answer_text for a short_text question (Decision #13: a skipped answer scores 0, not an error)" do
     question = create(:question, answer_type: :short_text)
     response = build(:response, question: question, answer_text: nil)
 
-    expect(response).not_to be_valid
-    expect(response.errors[:answer_text]).to be_present
+    expect(response).to be_valid
   end
 
   it "does not allow two responses to the same question in one attempt" do

@@ -22,18 +22,20 @@ class TestAttemptsController < ApplicationController
 
   def update
     if @test_attempt.in_progress?
-      @test_attempt.test.questions.find_each do |question|
-        answer = answer_params(question)
-        response = @test_attempt.responses.find_or_initialize_by(question: question)
-        response.answer_text = answer[:answer_text]
-        response.option_id = answer[:option_id]
-        response.points_awarded = question.grade(answer_text: answer[:answer_text], option_id: answer[:option_id])
-        response.grading_status = :auto_graded
-        response.save!
-      end
+      ActiveRecord::Base.transaction do
+        @test_attempt.test.questions.find_each do |question|
+          answer = answer_params(question)
+          response = @test_attempt.responses.find_or_initialize_by(question: question)
+          response.answer_text = answer[:answer_text]
+          response.option_id = answer[:option_id]
+          response.points_awarded = question.grade(answer_text: answer[:answer_text], option_id: answer[:option_id])
+          response.grading_status = :auto_graded
+          response.save!
+        end
 
-      @test_attempt.update!(status: :completed, completed_at: Time.current)
-      @test_attempt.recompute_score!
+        @test_attempt.update!(status: :completed, completed_at: Time.current)
+        @test_attempt.recompute_score!
+      end
     end
 
     redirect_to test_attempt_path(@test_attempt)
