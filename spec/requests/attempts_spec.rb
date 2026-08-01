@@ -16,6 +16,7 @@ RSpec.describe "Attempts", type: :request do
 
       expect(response).to have_http_status(:success)
       expect(response.body).to include(student.full_name)
+      expect(response.body).to include(student.school_class.name)
       expect(response.body).to include(attempt.score.to_s)
     end
 
@@ -25,6 +26,20 @@ RSpec.describe "Attempts", type: :request do
       get test_attempts_path(other_test)
 
       expect(response).to redirect_to(root_path)
+    end
+
+    it "groups attempts by school class" do
+      class_a = create(:school_class)
+      class_b = create(:school_class)
+      student_a = create(:student, school_class: class_a)
+      student_b = create(:student, school_class: class_b)
+      create(:test_attempt, :completed, test: test, student: student_a)
+      create(:test_attempt, :completed, test: test, student: student_b)
+
+      get test_attempts_path(test)
+
+      expect(response.body).to include(class_a.name)
+      expect(response.body).to include(class_b.name)
     end
   end
 

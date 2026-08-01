@@ -7,7 +7,7 @@ class AttemptsController < ApplicationController
     # TestPolicy#index? (named after this action), which only checks
     # "signed in", not ownership. We need the ownership check.
     authorize @test, :show?
-    @attempts = @test.test_attempts.includes(:student).order(:created_at)
+    @attempts_by_class = @test.test_attempts.includes(student: :school_class).order(:created_at).group_by { |a| a.student.school_class.name }
   end
 
   def show
