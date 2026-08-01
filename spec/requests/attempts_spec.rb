@@ -41,7 +41,6 @@ RSpec.describe "Attempts", type: :request do
       expect(response.body).to include(class_a.name)
       expect(response.body).to include(class_b.name)
     end
-
   end
 
   describe "GET /attempts/:id" do
