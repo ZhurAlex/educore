@@ -333,6 +333,11 @@ summary {
   font-size: 0.9rem;
 }
 
+summary.class-name {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
 /* Student results card */
 
 .results-card {
