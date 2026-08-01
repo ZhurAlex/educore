@@ -1,7 +1,8 @@
-# DEMO
-You could test this project on:
-https://educore-gdt0.onrender.com/
-(Pay attention that it is free-hosted, so it takes about 50 seconds to wake up after the first request)
+## Demo
+
+Live at https://educore-gdt0.onrender.com/ — note this is free-tier hosting,
+so the first request may take up to 50 seconds to wake the service up.
+
 - email: `teacher@example.com`
 - password: `password123`
   
