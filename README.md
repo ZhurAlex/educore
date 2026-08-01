@@ -1,3 +1,12 @@
+# Educore
+
+A student testing app for the classroom: a teacher builds tests, assigns
+them to a class, and prints/projects a QR code. Students scan it, pick their
+name, confirm with a light DDMM passcode, and take the test — multiple
+choice and short answer questions are graded automatically.
+
+Full design rationale and decisions log: [docs/SPEC.md](docs/SPEC.md).
+
 ## Demo
 
 Live at https://educore-gdt0.onrender.com/ — note this is free-tier hosting,
@@ -8,15 +17,6 @@ so the first request may take up to 50 seconds to wake the service up.
 
 Registration is closed (single-teacher portfolio project) — use the demo
 account above to sign in.
-  
-# Educore
-
-A student testing app for the classroom: a teacher builds tests, assigns
-them to a class, and prints/projects a QR code. Students scan it, pick their
-name, confirm with a light DDMM passcode, and take the test — multiple
-choice and short answer questions are graded automatically.
-
-Full design rationale and decisions log: [docs/SPEC.md](docs/SPEC.md).
 
 ## Tech stack
 
