@@ -148,6 +148,7 @@ en:
   test_attempts:
     show:
       submit: Submit
+      confirm_submit: "Ready to finish and see your result? You won't be able to change your answers after this."
       completed_headline: "Nice work — you're done!"
       completed_note: You can close this page now. Your teacher will see the result.
 

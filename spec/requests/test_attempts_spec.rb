@@ -53,6 +53,27 @@ RSpec.describe "TestAttempts", type: :request do
       expect(attempt.responses.count).to eq(2)
     end
 
+    it "allows a blank answer and scores it 0, instead of erroring (Decision #13)" do
+      mc_question = create(:question, :multiple_choice, test: test, points: 1)
+      st_question = create(:question, test: test, answer_type: :short_text, correct_answer: "Paris", points: 2)
+
+      attempt = sign_in_as_student!
+
+      patch test_attempt_path(attempt), params: {
+        answers: {
+          mc_question.id.to_s => { option_id: "" },
+          st_question.id.to_s => { answer_text: "" }
+        }
+      }
+
+      expect(response).to redirect_to(test_attempt_path(attempt))
+
+      attempt.reload
+      expect(attempt).to be_completed
+      expect(attempt.score).to eq(0)
+      expect(attempt.responses.count).to eq(2)
+    end
+
     it "lets the student view their result once, then clears the session (Decision #14)" do
       attempt = sign_in_as_student!
       patch test_attempt_path(attempt), params: { answers: {} }

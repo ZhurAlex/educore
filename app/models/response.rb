@@ -10,6 +10,4 @@ class Response < ApplicationRecord
   belongs_to :option, optional: true
 
   validates :question_id, uniqueness: { scope: :test_attempt_id }
-  validates :option, presence: true, if: -> { question&.multiple_choice? }
-  validates :answer_text, presence: true, if: -> { question&.short_text? }
 end
