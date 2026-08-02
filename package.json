@@ -1,0 +1,14 @@
+{
+  "name": "educore",
+  "private": true,
+  "scripts": {
+    "build": "esbuild app/javascript/react/test_attempt.jsx --bundle --outfile=app/assets/builds/test_attempt.js"
+  },
+  "dependencies": {
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25"
+  }
+}
