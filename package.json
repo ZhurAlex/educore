@@ -2,7 +2,8 @@
   "name": "educore",
   "private": true,
   "scripts": {
-    "build": "esbuild app/javascript/react/test_attempt.jsx --bundle --outfile=app/assets/builds/test_attempt.js"
+    "build": "esbuild app/javascript/react/test_attempt.jsx --bundle --outfile=app/assets/builds/test_attempt.js",
+    "build:watch": "npm run build -- --watch=forever"
   },
   "dependencies": {
     "react": "^18",

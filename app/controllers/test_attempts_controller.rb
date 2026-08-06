@@ -10,6 +10,7 @@ class TestAttemptsController < ApplicationController
   before_action :verify_owner!
 
   def show
+    # binding.pry
     @questions = @test_attempt.test.questions.order(:id) if @test_attempt.in_progress?
 
     # Decision #14 (docs/SPEC.md): clear the session once the student has
