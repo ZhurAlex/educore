@@ -149,6 +149,21 @@ ru:
     show:
       submit: Завершить
       confirm_submit: "Вы готовы завершить тест и получить результат? После подтверждения ответы нельзя будет изменить."
+      previous_question: Предыдущий вопрос
+      next_question: Следующий вопрос
+      question_progress: "Вопрос %{current} из %{total}"
+      points_suffix:
+        one: "%{count} балл"
+        few: "%{count} балла"
+        many: "%{count} баллов"
+        other: "%{count} балла"
+      your_answer: Ваш ответ
+      answer_placeholder: "Введите ваш ответ..."
+      confirm_yes: "Да"
+      confirm_no: "Нет"
+      submitting: "Отправка…"
+      submit_error: "Что-то пошло не так при отправке ответов. Попробуйте ещё раз."
+      no_questions: "Вопросы отсутствуют."
       completed_headline: "Молодец — тест завершён!"
       completed_note: Можешь закрывать эту страницу. Учитель увидит результат.
 

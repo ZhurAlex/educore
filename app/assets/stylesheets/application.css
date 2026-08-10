@@ -11,8 +11,8 @@
   --color-border: #e2e2ea;
   --color-text: #1f2430;
   --color-text-muted: #6b7280;
-  --color-primary: #4f46e5;
-  --color-primary-hover: #4338ca;
+  --color-primary: #047857;
+  --color-primary-hover: #065f46;
   --color-danger: #dc2626;
   --color-danger-bg: #fef2f2;
   --color-success-bg: #ecfdf5;
@@ -375,6 +375,133 @@ summary.class-name {
   color: var(--color-text-muted);
   font-size: 0.9rem;
   margin: 0;
+}
+
+/* Test attempt (React question-taking UI) */
+
+.test-attempt-app {
+  max-width: 32rem;
+  margin: 1.5rem auto 0;
+}
+
+.test-attempt-progress {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.test-attempt-question {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.test-attempt-body {
+  font-size: 1.05rem;
+  margin: 0 0 0.75rem;
+}
+
+.test-attempt-answer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.test-attempt-answer input[type="text"] {
+  width: 100%;
+}
+
+.test-attempt-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.test-attempt-nav-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Prev/Next are deliberately quieter than Submit — outline style, not the
+   solid primary button — so Submit reads as the one consequential action. */
+.test-attempt-nav-group button {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.5rem 0.9rem;
+}
+
+.test-attempt-nav-group button:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Confirmation modal (replaces window.confirm for the submit step) */
+
+.confirm-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 36, 48, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 100;
+}
+
+.confirm-dialog {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px -20px rgba(31, 36, 48, 0.35);
+  padding: 2rem;
+  width: 100%;
+  max-width: 22rem;
+  text-align: center;
+}
+
+.confirm-dialog p {
+  font-size: 1.05rem;
+  margin: 0 0 1.5rem;
+}
+
+.confirm-dialog-error {
+  color: var(--color-danger);
+  font-size: 0.9rem;
+  margin: -1rem 0 1rem;
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.confirm-dialog-actions button {
+  flex: 1;
+}
+
+.confirm-dialog-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.confirm-dialog-actions .confirm-no {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+.confirm-dialog-actions .confirm-no:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 /* Auth pages (Devise: sessions, passwords) — a centered card instead of

@@ -149,6 +149,19 @@ en:
     show:
       submit: Submit
       confirm_submit: "Ready to finish and see your result? You won't be able to change your answers after this."
+      previous_question: Previous question
+      next_question: Next question
+      question_progress: "Question %{current} of %{total}"
+      points_suffix:
+        one: "%{count} pt"
+        other: "%{count} pts"
+      your_answer: Your answer
+      answer_placeholder: "Enter your answer here..."
+      confirm_yes: "Yes"
+      confirm_no: "No"
+      submitting: "Submitting…"
+      submit_error: "Something went wrong submitting your answers. Please try again."
+      no_questions: "No questions available."
       completed_headline: "Nice work — you're done!"
       completed_note: You can close this page now. Your teacher will see the result.
 

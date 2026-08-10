@@ -1,26 +1,10 @@
 <h1><%= @test_attempt.test.title %></h1>
-
 <% if @test_attempt.in_progress? %>
-  <%= form_with model: @test_attempt do |form| %>
-    <% @questions.each do |question| %>
-      <fieldset>
-        <legend><%= question.body %> (<%= question.points %> pts)</legend>
-
-        <% if question.multiple_choice? %>
-          <% question.options.each do |option| %>
-            <div>
-              <%= radio_button_tag "answers[#{question.id}][option_id]", option.id %>
-              <%= label_tag "answers_#{question.id}_option_id_#{option.id}", option.body %>
-            </div>
-          <% end %>
-        <% else %>
-          <%= text_field_tag "answers[#{question.id}][answer_text]" %>
-        <% end %>
-      </fieldset>
-    <% end %>
-
-    <%= form.submit t(".submit"), data: { turbo_confirm: t(".confirm_submit") } %>
-  <% end %>
+  <div id="test-attempt-react-root" 
+    data-test-attempt-id="<%= @test_attempt.id %>"
+    data-questions="<%= questions_as_json(@questions)%>"
+    data-translations="<%= translations_as_json %>">
+  </div>
 <% else %>
   <div class="results-card">
     <p class="results-headline"><%= t(".completed_headline") %></p>
@@ -31,3 +15,4 @@
     <p class="results-note"><%= t(".completed_note") %></p>
   </div>
 <% end %>
+<%= javascript_include_tag "test_attempt" %>

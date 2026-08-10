@@ -32,6 +32,13 @@
 
 /public/assets
 
+# Compiled esbuild output (React) — rebuilt via `npm run build`.
+/app/assets/builds/*
+!/app/assets/builds/.keep
+
+# Node dependencies.
+/node_modules
+
 # Ignore SimpleCov coverage reports.
 /coverage
 
@@ -41,3 +48,4 @@
 # Editor-specific settings (see the note at the top of this file — a global
 # gitignore is arguably the more correct place for this, but this is simpler).
 /.vscode
+/notes.txt

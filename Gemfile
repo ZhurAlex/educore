@@ -35,6 +35,8 @@ gem "rqrcode"
 gem "sidekiq", "~> 7.3"
 gem "connection_pool", "~> 2.5"
 
+gem "jsbundling-rails", ">= 1.3.1"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
