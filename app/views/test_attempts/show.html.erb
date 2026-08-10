@@ -1,6 +1,6 @@
 <h1><%= @test_attempt.test.title %></h1>
 <% if @test_attempt.in_progress? %>
-  <div id="test-attempt-react-root" data-questions="<%= questions_as_json(@questions)%>"></div>
+  <div id="test-attempt-react-root" data-test-attempt-id="<%= @test_attempt.id %>" data-questions="<%= questions_as_json(@questions)%>"></div>
 <% else %>
   <div class="results-card">
     <p class="results-headline"><%= t(".completed_headline") %></p>

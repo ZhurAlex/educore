@@ -22,6 +22,25 @@ jobs:
       - name: Run RuboCop
         run: bundle exec rubocop
 
+  js_build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Build JS
+        run: npm run build
+
   test:
     runs-on: ubuntu-latest
 

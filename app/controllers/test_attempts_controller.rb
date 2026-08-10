@@ -10,7 +10,6 @@ class TestAttemptsController < ApplicationController
   before_action :verify_owner!
 
   def show
-    # binding.pry
     @questions = @test_attempt.test.questions.order(:id) if @test_attempt.in_progress?
 
     # Decision #14 (docs/SPEC.md): clear the session once the student has
@@ -39,7 +38,10 @@ class TestAttemptsController < ApplicationController
       end
     end
 
-    redirect_to test_attempt_path(@test_attempt)
+    respond_to do |format|
+      format.html { redirect_to test_attempt_path(@test_attempt) }
+      format.json { render json: { redirect_url: test_attempt_path(@test_attempt) } }
+    end
   end
 
   private

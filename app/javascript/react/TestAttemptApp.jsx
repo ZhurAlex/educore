@@ -1,12 +1,15 @@
 import React from "react";
 import { useState } from "react";
 import Question from "./Question";
+import ConfirmDialog from "./ConfirmDialog";
+import { formatAnswersForSubmission, sendAnswers } from "./api";
 
 
-export default function TestAttemptApp({questions=[]}) {
+export default function TestAttemptApp({questions=[], testAttemptId}) {
   const [userAnswers, setUserAnswers] = useState({})
   const [questionIndex, setQuestionIndex] = useState(0)
-  console.log(`Updating answers for question:`, userAnswers);
+  const [showConfirm, setShowConfirm] = useState(false)
+
 
   function updateAnswer(questionId, answer) {
     setUserAnswers(prev => ({
@@ -27,17 +30,33 @@ export default function TestAttemptApp({questions=[]}) {
     }
   }
 
+  function handleSubmit() {
+    const answers = formatAnswersForSubmission(questions, userAnswers);
+    sendAnswers(testAttemptId, answers);
+  }
+
   return <div className="test-attempt-app">
-    <button onClick={previousQuestion}> Previous question </button>
-    <button onClick={nextQuestion}> Next question </button>
-    <Question 
-      key={questions[questionIndex].id} 
+    <Question
+      key={questions[questionIndex].id}
       question={questions[questionIndex]}
       answer={userAnswers[questions[questionIndex].id] || ""}
       updateAnswer={updateAnswer}
       questionIndex={questionIndex+1}
       questionsAmount={questions.length}
     />
-    <input type="submit" value="Submit Test" />
+    <div className="test-attempt-nav">
+      <div className="test-attempt-nav-group">
+        <button onClick={previousQuestion} aria-label="Previous question">←</button>
+        <button onClick={nextQuestion} aria-label="Next question">→</button>
+      </div>
+      <button className="test-attempt-submit" onClick={() => setShowConfirm(true)}>Submit Test</button>
+    </div>
+
+    {showConfirm && (
+      <ConfirmDialog
+        onConfirm={() => { handleSubmit() }}
+        onCancel={() => setShowConfirm(false)}
+      />
+    )}
   </div>
 }
