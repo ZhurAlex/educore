@@ -7,20 +7,44 @@ RSpec.describe TestAttemptsHelper, type: :helper do
       correct_option = question.options.find(&:correct?)
       wrong_option = question.options.find { |o| !o.correct? }
 
-      json = JSON.parse(helper.questions_as_json([ question ]))
+      json = I18n.with_locale(:en) { JSON.parse(helper.questions_as_json([ question ])) }
 
       expect(json).to eq([
         {
           "id" => question.id,
           "body" => "Pick one",
           "answer_type" => "multiple_choice",
-          "points" => "2.0",
+          "points_label" => "2 pts",
           "options" => [
             { "id" => correct_option.id, "body" => correct_option.body },
             { "id" => wrong_option.id, "body" => wrong_option.body }
           ]
         }
       ])
+    end
+
+    it "strips the trailing .0 from whole-number points, but keeps real fractions" do
+      whole = create(:question, points: 2)
+      fraction = create(:question, points: 1.5)
+
+      json = I18n.with_locale(:en) { JSON.parse(helper.questions_as_json([ whole, fraction ])) }
+
+      expect(json[0]["points_label"]).to eq("2 pts")
+      expect(json[1]["points_label"]).to eq("1.5 pts")
+    end
+
+    it "uses the correct ru pluralization form per points count" do
+      one = create(:question, points: 1)
+      few = create(:question, points: 3)
+      many = create(:question, points: 5)
+
+      I18n.with_locale(:ru) do
+        json = JSON.parse(helper.questions_as_json([ one, few, many ]))
+
+        expect(json[0]["points_label"]).to eq("1 балл")
+        expect(json[1]["points_label"]).to eq("3 балла")
+        expect(json[2]["points_label"]).to eq("5 баллов")
+      end
     end
 
     it "does not leak which option is correct, or the short_text correct_answer" do
@@ -44,12 +68,12 @@ RSpec.describe TestAttemptsHelper, type: :helper do
 
   describe "#translations_as_json" do
     it "returns the test_attempts.show translations for the current locale" do
-      I18n.locale = :en
+      I18n.with_locale(:en) do
+        json = JSON.parse(helper.translations_as_json)
 
-      json = JSON.parse(helper.translations_as_json)
-
-      expect(json["submit"]).to eq("Submit")
-      expect(json["question_progress"]).to eq("Question %{current} of %{total}")
+        expect(json["submit"]).to eq("Submit")
+        expect(json["question_progress"]).to eq("Question %{current} of %{total}")
+      end
     end
   end
 end

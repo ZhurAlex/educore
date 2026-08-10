@@ -68,7 +68,10 @@ export default function TestAttemptApp({translations, questions=[], testAttemptI
       {showConfirm && (
         <ConfirmDialog
           onConfirm={handleSubmit}
-          onCancel={() => setShowConfirm(false)}
+          onCancel={() => {
+            setShowConfirm(false)
+            setSubmitError(null)
+          }}
           isSubmitting={isSubmitting}
           error={submitError}
         />

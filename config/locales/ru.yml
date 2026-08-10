@@ -152,7 +152,11 @@ ru:
       previous_question: Предыдущий вопрос
       next_question: Следующий вопрос
       question_progress: "Вопрос %{current} из %{total}"
-      points_suffix: "%{points} балл(ов)"
+      points_suffix:
+        one: "%{count} балл"
+        few: "%{count} балла"
+        many: "%{count} баллов"
+        other: "%{count} балла"
       your_answer: Ваш ответ
       answer_placeholder: "Введите ваш ответ..."
       confirm_yes: "Да"

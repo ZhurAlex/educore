@@ -11,7 +11,7 @@ export default function Question({question, answer, updateAnswer, questionIndex,
         </p>
         <p className="test-attempt-body">
           {question.body}
-          <span className="badge">{interpolate(translations.points_suffix, { points: question.points })}</span>
+          <span className="badge">{question.points_label}</span>
         </p>
         <div className="test-attempt-answer">
           { question.answer_type === "multiple_choice" ? (

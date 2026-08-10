@@ -152,7 +152,9 @@ en:
       previous_question: Previous question
       next_question: Next question
       question_progress: "Question %{current} of %{total}"
-      points_suffix: "%{points} pts"
+      points_suffix:
+        one: "%{count} pt"
+        other: "%{count} pts"
       your_answer: Your answer
       answer_placeholder: "Enter your answer here..."
       confirm_yes: "Yes"

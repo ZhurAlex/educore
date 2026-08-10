@@ -152,7 +152,11 @@ uk:
       previous_question: Попереднє питання
       next_question: Наступне питання
       question_progress: "Питання %{current} з %{total}"
-      points_suffix: "%{points} бал(ів)"
+      points_suffix:
+        one: "%{count} бал"
+        few: "%{count} бали"
+        many: "%{count} балів"
+        other: "%{count} бала"
       your_answer: Ваша відповідь
       answer_placeholder: "Введіть вашу відповідь..."
       confirm_yes: "Так"
