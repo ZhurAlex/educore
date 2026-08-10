@@ -9,8 +9,11 @@ export default function MultipleChoiceAnswer({options, questionId, answer, updat
             value={option.id}
             checked={option.id === answer}
             onChange={() => updateAnswer(questionId, option.id)}
+            id={`multiple-choice-${questionId}-${option.id}`}
             />
-            {option.body}
+            <label htmlFor={`multiple-choice-${questionId}-${option.id}`}>
+                {option.body}
+            </label>
         </div>
     ))
 

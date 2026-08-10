@@ -482,6 +482,12 @@ summary.class-name {
   margin: 0 0 1.5rem;
 }
 
+.confirm-dialog-error {
+  color: var(--color-danger);
+  font-size: 0.9rem;
+  margin: -1rem 0 1rem;
+}
+
 .confirm-dialog-actions {
   display: flex;
   justify-content: center;
@@ -490,6 +496,11 @@ summary.class-name {
 
 .confirm-dialog-actions button {
   flex: 1;
+}
+
+.confirm-dialog-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .confirm-dialog-actions .confirm-yes {

@@ -15,4 +15,8 @@ module TestAttemptsHelper
       }
     end.to_json
   end
+
+  def translations_as_json
+     I18n.t("test_attempts.show").to_json
+  end
 end

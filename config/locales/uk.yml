@@ -149,6 +149,17 @@ uk:
     show:
       submit: Завершити
       confirm_submit: "Готовий завершити тест і отримати результат? Після підтвердження відповіді змінити не можна."
+      previous_question: Попереднє питання
+      next_question: Наступне питання
+      question_progress: "Питання %{current} з %{total}"
+      points_suffix: "%{points} бал(ів)"
+      your_answer: Ваша відповідь
+      answer_placeholder: "Введіть вашу відповідь..."
+      confirm_yes: "Так"
+      confirm_no: "Ні"
+      submitting: "Надсилання…"
+      submit_error: "Щось пішло не так під час надсилання відповідей. Спробуйте ще раз."
+      no_questions: "Питання відсутні."
       completed_headline: "Молодець — тест завершено!"
       completed_note: Можеш закривати цю сторінку. Вчитель побачить результат.
 

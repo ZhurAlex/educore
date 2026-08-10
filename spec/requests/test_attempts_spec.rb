@@ -30,7 +30,7 @@ RSpec.describe "TestAttempts", type: :request do
   end
 
   describe "PATCH /test_attempts/:id" do
-    it "grades answers, completes the attempt, and redirects (Turbo Drive needs a redirect after a form POST)" do
+    it "grades answers, completes the attempt, and returns a redirect_url" do
       mc_question = create(:question, :multiple_choice, test: test, points: 1)
       correct_option = mc_question.options.find(&:correct?)
       st_question = create(:question, test: test, answer_type: :short_text, correct_answer: "Paris", points: 2)
@@ -42,9 +42,10 @@ RSpec.describe "TestAttempts", type: :request do
           mc_question.id.to_s => { option_id: correct_option.id },
           st_question.id.to_s => { answer_text: "paris" }
         }
-      }
+      }, as: :json
 
-      expect(response).to redirect_to(test_attempt_path(attempt))
+      expect(response).to have_http_status(:success)
+      expect(JSON.parse(response.body)["redirect_url"]).to eq(test_attempt_path(attempt))
 
       attempt.reload
       expect(attempt).to be_completed
@@ -64,9 +65,10 @@ RSpec.describe "TestAttempts", type: :request do
           mc_question.id.to_s => { option_id: "" },
           st_question.id.to_s => { answer_text: "" }
         }
-      }
+      }, as: :json
 
-      expect(response).to redirect_to(test_attempt_path(attempt))
+      expect(response).to have_http_status(:success)
+      expect(JSON.parse(response.body)["redirect_url"]).to eq(test_attempt_path(attempt))
 
       attempt.reload
       expect(attempt).to be_completed
@@ -76,7 +78,7 @@ RSpec.describe "TestAttempts", type: :request do
 
     it "lets the student view their result once, then clears the session (Decision #14)" do
       attempt = sign_in_as_student!
-      patch test_attempt_path(attempt), params: { answers: {} }
+      patch test_attempt_path(attempt), params: { answers: {} }, as: :json
 
       # first view after completion still has the session — succeeds
       get test_attempt_path(attempt)

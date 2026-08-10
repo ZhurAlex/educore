@@ -10,7 +10,7 @@ class TestAttemptsController < ApplicationController
   before_action :verify_owner!
 
   def show
-    @questions = @test_attempt.test.questions.order(:id) if @test_attempt.in_progress?
+    @questions = @test_attempt.test.questions.includes(:options).order(:id) if @test_attempt.in_progress?
 
     # Decision #14 (docs/SPEC.md): clear the session once the student has
     # actually seen their result — not in `update`, since Turbo Drive
@@ -38,10 +38,7 @@ class TestAttemptsController < ApplicationController
       end
     end
 
-    respond_to do |format|
-      format.html { redirect_to test_attempt_path(@test_attempt) }
-      format.json { render json: { redirect_url: test_attempt_path(@test_attempt) } }
-    end
+    render json: { redirect_url: test_attempt_path(@test_attempt) }
   end
 
   private

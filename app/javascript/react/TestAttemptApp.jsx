@@ -3,12 +3,15 @@ import { useState } from "react";
 import Question from "./Question";
 import ConfirmDialog from "./ConfirmDialog";
 import { formatAnswersForSubmission, sendAnswers } from "./api";
+import { TranslationsContext } from "./translations_context";
 
 
-export default function TestAttemptApp({questions=[], testAttemptId}) {
+export default function TestAttemptApp({translations, questions=[], testAttemptId}) {
   const [userAnswers, setUserAnswers] = useState({})
   const [questionIndex, setQuestionIndex] = useState(0)
   const [showConfirm, setShowConfirm] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState(null)
 
 
   function updateAnswer(questionId, answer) {
@@ -30,33 +33,46 @@ export default function TestAttemptApp({questions=[], testAttemptId}) {
     }
   }
 
-  function handleSubmit() {
-    const answers = formatAnswersForSubmission(questions, userAnswers);
-    sendAnswers(testAttemptId, answers);
+  async function handleSubmit() {
+    setIsSubmitting(true)
+    setSubmitError(null)
+    try {
+      const answers = formatAnswersForSubmission(questions, userAnswers);
+      await sendAnswers(testAttemptId, answers);
+      // On success sendAnswers navigates the browser away — nothing left to do here.
+    } catch (error) {
+      setSubmitError(translations.submit_error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  return <div className="test-attempt-app">
-    <Question
-      key={questions[questionIndex].id}
-      question={questions[questionIndex]}
-      answer={userAnswers[questions[questionIndex].id] || ""}
-      updateAnswer={updateAnswer}
-      questionIndex={questionIndex+1}
-      questionsAmount={questions.length}
-    />
-    <div className="test-attempt-nav">
-      <div className="test-attempt-nav-group">
-        <button onClick={previousQuestion} aria-label="Previous question">←</button>
-        <button onClick={nextQuestion} aria-label="Next question">→</button>
-      </div>
-      <button className="test-attempt-submit" onClick={() => setShowConfirm(true)}>Submit Test</button>
-    </div>
-
-    {showConfirm && (
-      <ConfirmDialog
-        onConfirm={() => { handleSubmit() }}
-        onCancel={() => setShowConfirm(false)}
+  return <TranslationsContext.Provider value={{translations}}>
+    <div className="test-attempt-app">
+      <Question
+        key={questions[questionIndex].id}
+        question={questions[questionIndex]}
+        answer={userAnswers[questions[questionIndex].id] || ""}
+        updateAnswer={updateAnswer}
+        questionIndex={questionIndex+1}
+        questionsAmount={questions.length}
       />
-    )}
-  </div>
+      <div className="test-attempt-nav">
+        <div className="test-attempt-nav-group">
+          <button onClick={previousQuestion} aria-label={translations.previous_question}>←</button>
+          <button onClick={nextQuestion} aria-label={translations.next_question}>→</button>
+        </div>
+        <button className="test-attempt-submit" onClick={() => setShowConfirm(true)}>{translations.submit}</button>
+      </div>
+
+      {showConfirm && (
+        <ConfirmDialog
+          onConfirm={handleSubmit}
+          onCancel={() => setShowConfirm(false)}
+          isSubmitting={isSubmitting}
+          error={submitError}
+        />
+      )}
+    </div>
+  </TranslationsContext.Provider>
 }

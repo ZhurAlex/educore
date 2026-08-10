@@ -17,24 +17,21 @@ export function formatAnswersForSubmission(questions, userAnswers) {
 
 export async function sendAnswers(testAttemptId, answers) {
   const csrfToken = document.querySelector("meta[name='csrf-token']")?.content;
-  try {
-    const response = await fetch(`/test_attempts/${testAttemptId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "X-CSRF-Token": csrfToken
-      },
-      body: JSON.stringify({ answers: answers })
-    });
 
-    if (response.ok) {
-      const data = await response.json();
-      window.location.href = data.redirect_url;
-    } else {
-      console.error("Submit failed:", response.status);
-    }
-  } catch (error) {
-    console.error("Error submitting answers:", error);
+  const response = await fetch(`/test_attempts/${testAttemptId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "X-CSRF-Token": csrfToken
+    },
+    body: JSON.stringify({ answers: answers })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Submit failed with status ${response.status}`);
   }
+
+  const data = await response.json();
+  window.location.href = data.redirect_url;
 }
