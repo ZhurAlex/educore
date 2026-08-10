@@ -25,7 +25,8 @@ export async function sendAnswers(testAttemptId, answers) {
       "Accept": "application/json",
       "X-CSRF-Token": csrfToken
     },
-    body: JSON.stringify({ answers: answers })
+    body: JSON.stringify({ answers: answers }),
+    signal: AbortSignal.timeout(15000)
   });
 
   if (!response.ok) {
