@@ -25,7 +25,11 @@ account above to sign in.
 - Sidekiq — background jobs (currently: sending Devise emails via `deliver_later`,
   so a slow mail send doesn't block the request; see SPEC's "Later" section
   for the next thing it'll carry — LLM grading)
-- Hotwire (Turbo + Stimulus), Sprockets — no JS framework, no bundler
+- Hotwire (Turbo + Stimulus) for the teacher-facing admin UI, no bundler
+  needed there (importmap-rails)
+- React (esbuild via `jsbundling-rails`) for the student test-taking page —
+  a separate, independent JS pipeline living alongside importmap, not
+  replacing it (see `app/javascript/react/`)
 - Devise (teacher auth — registration is closed, see SPEC Decision #11) + Pundit
 - ActionMailer + `letter_opener_web` — emails are never really sent in dev;
   view them at `/letter_opener` instead
@@ -38,11 +42,16 @@ account above to sign in.
 
 ## Setup
 
-**Prerequisites:** [asdf](https://asdf-vm.com) (or any Ruby 3.3.0 install) and Docker.
+**Prerequisites:** [asdf](https://asdf-vm.com) (or any Ruby 3.3.0 install),
+Docker, and Node.js (any recent LTS — used only to build the React bundle
+below, not for anything else).
 
 ```bash
 asdf install                    # ruby 3.3.0, from .tool-versions
 bundle install
+
+npm ci                          # installs esbuild + react
+npm run build                   # compiles app/javascript/react into app/assets/builds
 
 cp .env.example .env            # Postgres + Redis config for docker-compose
 docker compose up -d             # Postgres + Redis
@@ -77,11 +86,21 @@ same link is what a student's phone lands on.
 Emails (e.g. "Forgot your password?") are never actually sent in
 development — view them at `http://localhost:3000/letter_opener` instead.
 
+**Working on the React test-taking page** (`app/javascript/react/`): the
+compiled bundle is not rebuilt automatically on save. Run this in its own
+terminal while editing:
+
+```bash
+npm run build:watch
+```
+
 ## Testing
 
 ```bash
-bundle exec rspec        # runs the suite, generates a SimpleCov report at coverage/index.html
-bundle exec rubocop      # lint/style — same check CI runs
+npm run build             # request specs render this page, so the JS bundle
+                           # must exist first — see app/javascript/react/
+bundle exec rspec         # runs the suite, generates a SimpleCov report at coverage/index.html
+bundle exec rubocop       # lint/style — same check CI runs
 ```
 
 ## Project structure notes
