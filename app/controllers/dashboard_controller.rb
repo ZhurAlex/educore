@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DashboardController < ApplicationController
   def show
     @school_classes = SchoolClass.order(:name)

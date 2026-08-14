@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ResponsesController < ApplicationController
   before_action :set_response
 
@@ -10,7 +12,7 @@ class ResponsesController < ApplicationController
     @response.update!(points_awarded: response_params[:points_awarded], grading_status: :teacher_overridden)
     @response.test_attempt.recompute_score!
 
-    redirect_to attempt_path(@response.test_attempt), notice: t(".success")
+    redirect_to attempt_path(@response.test_attempt), notice: t('.success')
   end
 
   private

@@ -39,6 +39,12 @@ uk:
         answer_type: Тип відповіді
         points: Бали
         correct_answer: "Правильна відповідь (лише short_text)"
+    errors:
+      models:
+        test_attempt:
+          attributes:
+            test_id:
+              active_attempt_exists: вже є активна спроба проходження цього тесту
 
   dashboard:
     show:

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TestAttemptsHelper
   def questions_as_json(questions)
     questions.map do |question|
@@ -5,7 +7,7 @@ module TestAttemptsHelper
         id: question.id,
         body: question.body,
         answer_type: question.answer_type,
-        points_label: t("test_attempts.show.points_suffix", count: display_points(question.points)),
+        points_label: t('test_attempts.show.points_suffix', count: display_points(question.points)),
         options: question.options.map do |option|
           {
             id: option.id,
@@ -17,7 +19,7 @@ module TestAttemptsHelper
   end
 
   def translations_as_json
-    I18n.t("test_attempts.show").to_json
+    I18n.t('test_attempts.show').to_json
   end
 
   private

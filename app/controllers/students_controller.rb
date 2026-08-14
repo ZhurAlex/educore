@@ -1,10 +1,16 @@
+# frozen_string_literal: true
+
 class StudentsController < ApplicationController
-  before_action :set_school_class, only: [ :new, :create ]
-  before_action :set_student, only: [ :edit, :update, :destroy ]
+  before_action :set_school_class, only: %i[new create]
+  before_action :set_student, only: %i[edit update destroy]
 
   def new
     authorize Student
     @student = @school_class.students.new
+  end
+
+  def edit
+    authorize @student
   end
 
   def create
@@ -12,21 +18,17 @@ class StudentsController < ApplicationController
     @student = @school_class.students.new(student_params)
 
     if @student.save
-      redirect_to @school_class, notice: t(".success")
+      redirect_to @school_class, notice: t('.success')
     else
       render :new, status: :unprocessable_content
     end
-  end
-
-  def edit
-    authorize @student
   end
 
   def update
     authorize @student
 
     if @student.update(student_params)
-      redirect_to @student.school_class, notice: t(".success")
+      redirect_to @student.school_class, notice: t('.success')
     else
       render :edit, status: :unprocessable_content
     end
@@ -36,7 +38,7 @@ class StudentsController < ApplicationController
     authorize @student
     school_class = @student.school_class
     @student.destroy
-    redirect_to school_class, notice: t(".success")
+    redirect_to school_class, notice: t('.success')
   end
 
   private

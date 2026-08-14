@@ -39,6 +39,12 @@ en:
         answer_type: Answer type
         points: Points
         correct_answer: "Correct answer (short_text only)"
+    errors:
+      models:
+        test_attempt:
+          attributes:
+            test_id:
+              active_attempt_exists: already has an active attempt for this test
 
   dashboard:
     show:

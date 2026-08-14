@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class TestAttempt < ApplicationRecord
   # A distinct "graded" state returns once long_text/manual review is
   # reintroduced — see docs/SPEC.md Data Model note on TestAttempt.
-  enum status: { in_progress: 0, completed: 1 }
+  enum :status, { in_progress: 0, completed: 1 }
 
   belongs_to :student
   belongs_to :test
@@ -13,7 +15,7 @@ class TestAttempt < ApplicationRecord
   validates :test_id, uniqueness: {
     scope: :student_id,
     conditions: -> { where(status: statuses[:in_progress]) },
-    message: "already has an active attempt for this test"
+    message: :active_attempt_exists
   }, if: :in_progress?
 
   # Decision #13 (docs/SPEC.md): score is the auto-computed sum of

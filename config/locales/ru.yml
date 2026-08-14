@@ -39,6 +39,12 @@ ru:
         answer_type: Тип ответа
         points: Баллы
         correct_answer: "Правильный ответ (только short_text)"
+    errors:
+      models:
+        test_attempt:
+          attributes:
+            test_id:
+              active_attempt_exists: уже есть активная попытка прохождения этого теста
 
   dashboard:
     show:

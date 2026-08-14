@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
 
@@ -14,8 +16,8 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def switch_locale(&action)
-    I18n.with_locale(session[:locale] || I18n.default_locale, &action)
+  def switch_locale(&)
+    I18n.with_locale(session[:locale] || I18n.default_locale, &)
   end
 
   # Devise scope is :teacher (not the default :user), so Pundit needs to be
@@ -25,7 +27,7 @@ class ApplicationController < ActionController::Base
   end
 
   def user_not_authorized
-    flash[:alert] = t("pundit.not_authorized")
-    redirect_back fallback_location: root_path
+    flash[:alert] = t('pundit.not_authorized')
+    redirect_back_or_to(root_path)
   end
 end

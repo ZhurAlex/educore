@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StudentPasscodesController < ApplicationController
   # Public — see docs/SPEC.md "Birth-Date Passcode". Not real authentication,
   # just light protection against a classmate finishing the test as a prank.
@@ -8,8 +10,7 @@ class StudentPasscodesController < ApplicationController
   before_action :set_test_assignment
   before_action :set_student
 
-  def new
-  end
+  def new; end
 
   def create
     if @student.passcode_matches?(params[:passcode])
@@ -23,7 +24,7 @@ class StudentPasscodesController < ApplicationController
       session[:student_id] = @student.id
       redirect_to test_attempt_path(test_attempt)
     else
-      flash.now[:alert] = t(".invalid_passcode")
+      flash.now[:alert] = t('.invalid_passcode')
       render :new, status: :unprocessable_content
     end
   end
@@ -38,7 +39,7 @@ class StudentPasscodesController < ApplicationController
     @student = @test_assignment.school_class.students.find(params[:student_id])
   end
 
-  def switch_locale_to_test(&action)
-    I18n.with_locale(TestAssignment.find(params[:test_assignment_id]).test.locale, &action)
+  def switch_locale_to_test(&)
+    I18n.with_locale(TestAssignment.find(params[:test_assignment_id]).test.locale, &)
   end
 end

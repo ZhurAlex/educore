@@ -1,19 +1,21 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe SchoolClass, type: :model do
-  it "has a valid factory" do
+  it 'has a valid factory' do
     expect(build(:school_class)).to be_valid
   end
 
-  it "requires a name" do
+  it 'requires a name' do
     expect(build(:school_class, name: nil)).not_to be_valid
   end
 
-  it "is shared across teachers — no teacher_id (see docs/SPEC.md Decision #10)" do
-    expect(SchoolClass.column_names).not_to include("teacher_id")
+  it 'is shared across teachers — no teacher_id (see docs/SPEC.md Decision #10)' do
+    expect(SchoolClass.column_names).not_to include('teacher_id')
   end
 
-  it "can be assigned to multiple tests via TestAssignment" do
+  it 'can be assigned to multiple tests via TestAssignment' do
     school_class = create(:school_class)
     test_a = create(:test)
     test_b = create(:test)

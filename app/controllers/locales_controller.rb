@@ -1,9 +1,9 @@
+# frozen_string_literal: true
+
 class LocalesController < ApplicationController
   def update
-    if I18n.available_locales.map(&:to_s).include?(params[:locale])
-      session[:locale] = params[:locale]
-    end
+    session[:locale] = params[:locale] if I18n.available_locales.map(&:to_s).include?(params[:locale])
 
-    redirect_back fallback_location: root_path
+    redirect_back_or_to(root_path)
   end
 end

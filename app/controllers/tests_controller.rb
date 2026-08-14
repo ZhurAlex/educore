@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class TestsController < ApplicationController
-  before_action :set_test, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_test, only: %i[show edit update destroy]
 
   def index
     authorize Test
@@ -16,26 +18,26 @@ class TestsController < ApplicationController
     @test = current_teacher.tests.new
   end
 
+  def edit
+    authorize @test
+  end
+
   def create
     authorize Test
     @test = current_teacher.tests.new(test_params)
 
     if @test.save
-      redirect_to @test, notice: t(".success")
+      redirect_to @test, notice: t('.success')
     else
       render :new, status: :unprocessable_content
     end
-  end
-
-  def edit
-    authorize @test
   end
 
   def update
     authorize @test
 
     if @test.update(test_params)
-      redirect_to @test, notice: t(".success")
+      redirect_to @test, notice: t('.success')
     else
       render :edit, status: :unprocessable_content
     end
@@ -44,7 +46,7 @@ class TestsController < ApplicationController
   def destroy
     authorize @test
     @test.destroy
-    redirect_to tests_path, notice: t(".success")
+    redirect_to tests_path, notice: t('.success')
   end
 
   private

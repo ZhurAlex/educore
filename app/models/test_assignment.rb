@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TestAssignment < ApplicationRecord
   belongs_to :test
   belongs_to :school_class

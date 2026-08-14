@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TestAttemptsController < ApplicationController
   # Public — the student takes the test here, no teacher auth. Access is
   # gated by session[:student_id] set during passcode verification (see
@@ -23,16 +25,7 @@ class TestAttemptsController < ApplicationController
   def update
     if @test_attempt.in_progress?
       ActiveRecord::Base.transaction do
-        @test_attempt.test.questions.find_each do |question|
-          answer = answer_params(question)
-          response = @test_attempt.responses.find_or_initialize_by(question: question)
-          response.answer_text = answer[:answer_text]
-          response.option_id = answer[:option_id]
-          response.points_awarded = question.grade(answer_text: answer[:answer_text], option_id: answer[:option_id])
-          response.grading_status = :auto_graded
-          response.save!
-        end
-
+        @test_attempt.test.questions.find_each { |question| grade_question(question) }
         @test_attempt.update!(status: :completed, completed_at: Time.current)
         @test_attempt.recompute_score!
       end
@@ -42,6 +35,16 @@ class TestAttemptsController < ApplicationController
   end
 
   private
+
+  def grade_question(question)
+    answer = answer_params(question)
+    response = @test_attempt.responses.find_or_initialize_by(question: question)
+    response.answer_text = answer[:answer_text]
+    response.option_id = answer[:option_id]
+    response.points_awarded = question.grade(answer_text: answer[:answer_text], option_id: answer[:option_id])
+    response.grading_status = :auto_graded
+    response.save!
+  end
 
   def set_test_attempt
     @test_attempt = TestAttempt.find(params[:id])
@@ -55,7 +58,7 @@ class TestAttemptsController < ApplicationController
     params.dig(:answers, question.id.to_s)&.permit(:answer_text, :option_id) || {}
   end
 
-  def switch_locale_to_test(&action)
-    I18n.with_locale(TestAttempt.find(params[:id]).test.locale, &action)
+  def switch_locale_to_test(&)
+    I18n.with_locale(TestAttempt.find(params[:id]).test.locale, &)
   end
 end

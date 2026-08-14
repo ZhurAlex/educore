@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Student < ApplicationRecord
   belongs_to :school_class
   has_many :test_attempts, dependent: :destroy
@@ -11,7 +13,7 @@ class Student < ApplicationRecord
   # DDMM passcode — see docs/SPEC.md "Birth-Date Passcode" (not authentication,
   # just a light check against a classmate finishing the test as a prank).
   def passcode
-    birth_date.strftime("%d%m")
+    birth_date.strftime('%d%m')
   end
 
   def passcode_matches?(input)

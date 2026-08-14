@@ -1,62 +1,68 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-ruby "3.3.0"
+source 'https://rubygems.org'
+
+ruby '3.3.0'
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.1.5"
+gem 'rails', '~> 7.1.5'
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
-gem "sprockets-rails"
+gem 'sprockets-rails'
 
 # Hotwire — see docs/SPEC.md Tech Stack / project goals
-gem "importmap-rails"
-gem "turbo-rails"
-gem "stimulus-rails"
+gem 'importmap-rails'
+gem 'stimulus-rails'
+gem 'turbo-rails'
 
 # Use postgresql as the database for Active Record
-gem "pg", "~> 1.1"
+gem 'pg', '~> 1.1'
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", ">= 5.0"
+gem 'puma', '>= 5.0'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem 'tzinfo-data', platforms: %i[windows jruby]
 
 # Teacher authentication
-gem "devise"
-gem "devise-i18n"
+gem 'devise'
+gem 'devise-i18n'
 
 # Teacher-side authorization (own tests only — see docs/SPEC.md Ownership model)
-gem "pundit"
+gem 'pundit'
 
 # QR code generation for TestAssignment links
-gem "rqrcode"
+gem 'rqrcode'
 
-gem "sidekiq", "~> 7.3"
-gem "connection_pool", "~> 2.5"
+gem 'connection_pool', '~> 2.5'
+gem 'sidekiq', '~> 7.3'
 
-gem "jsbundling-rails", ">= 1.3.1"
+gem 'jsbundling-rails', '>= 1.3.1'
+
+gem 'gemini-ai', '>= 4.3'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri windows ]
+  gem 'debug', platforms: %i[mri windows]
 
   # binding.pry — step commands (next/step/continue) need pry-byebug on top
-  gem "pry-rails"
-  gem "pry-byebug"
+  gem 'pry-byebug'
+  gem 'pry-rails'
 
   # Load .env into ENV for local dev/test (Postgres runs in docker-compose)
-  gem "dotenv-rails"
+  gem 'dotenv-rails'
 
-  # Lint/style checks (see docs/SPEC.md issue #17) — Rails' own default preset
-  gem "rubocop-rails-omakase", require: false
+  # Lint/style checks (see docs/SPEC.md issue #17) — RuboCop's own defaults
+  # (indentation, quote style, alignment, etc.), plus Rails-specific cops.
+  gem 'rubocop', require: false
+  gem 'rubocop-rails', require: false
 
   # Testing (see docs/SPEC.md Tech Stack)
-  gem "rspec-rails"
-  gem "factory_bot_rails"
-  gem "faker"
-  gem "letter_opener_web"
-  gem "simplecov", require: false
+  gem 'factory_bot_rails'
+  gem 'faker'
+  gem 'letter_opener_web'
+  gem 'rspec-rails'
+  gem 'simplecov', require: false
 end
 
 group :development do

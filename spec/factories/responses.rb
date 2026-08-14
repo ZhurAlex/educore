@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :response do
     test_attempt
     question
-    answer_text { "answer" }
+    answer_text { 'answer' }
     grading_status { :auto_graded }
     points_awarded { 1.5 }
 
