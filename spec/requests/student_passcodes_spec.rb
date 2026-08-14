@@ -45,5 +45,13 @@ RSpec.describe 'StudentPasscodes', type: :request do
 
       expect(response).to have_http_status(:unprocessable_content)
     end
+
+    it 'throttles repeated passcode attempts against the same student (rack-attack)' do
+      10.times { post student_passcode_path(assignment, student), params: { passcode: '9999' } }
+
+      post student_passcode_path(assignment, student), params: { passcode: '9999' }
+
+      expect(response).to have_http_status(:too_many_requests)
+    end
   end
 end

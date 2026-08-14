@@ -1,4 +1,11 @@
 ru:
+  student_entry:
+    index:
+      title: Выберите свой класс
+    results:
+      heading: Кто уже прошёл этот тест
+      empty: Пока никто не прошёл этот тест.
+
   nav:
     brand: Educore
     school_classes: Классы

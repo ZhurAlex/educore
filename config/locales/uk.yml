@@ -1,4 +1,11 @@
 uk:
+  student_entry:
+    index:
+      title: Обери свій клас
+    results:
+      heading: Хто вже пройшов цей тест
+      empty: Поки що ніхто не пройшов цей тест.
+
   nav:
     brand: Educore
     school_classes: Класи

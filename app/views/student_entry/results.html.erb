@@ -1,0 +1,13 @@
+<h1><%= @test_assignment.test.title %></h1>
+
+<h2><%= t(".heading") %></h2>
+
+<% if @completed_attempts.any? %>
+  <ul>
+    <% @completed_attempts.each do |attempt| %>
+      <li><%= link_to attempt.student.full_name, student_passcode_path(@test_assignment, attempt.student) %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p><%= t(".empty") %></p>
+<% end %>

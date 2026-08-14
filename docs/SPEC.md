@@ -185,12 +185,14 @@ sessions). Implementation: a simple check of 4 digits (DDMM derived from
 security — it's reducing the chance that someone completes the test on
 behalf of another student as a joke.
 
-**Session cleanup:** `session[:student_id]` (and any attempt-scoped session
-key) must be cleared once the attempt is submitted/completed. The expected
-case is each student using their own phone (with a printed/paper version for
-students without a smartphone), but the session still shouldn't outlive the
-attempt — otherwise a later scan on the same device could resume as the
-previous student.
+**Session cleanup (superseded, see Decision #14):** results are now meant to
+be re-visitable (student entry flow below), so `session[:student_id]` is no
+longer cleared after viewing a completed attempt — it persists for the
+browser session like any other Rails session cookie. The residual risk is a
+classmate reloading the same page on a handed-over phone before the tab
+closes and seeing that student's grade; consistent with this section's
+opening line, that's an acceptable gap given the passcode was never real
+authentication to begin with.
 
 ---
 
@@ -301,10 +303,21 @@ end to end without any manual setup through the admin panel:
     `points_awarded` on an individual response (`grading_status:
     teacher_overridden`), which cascades: recomputes `score`, which
     recomputes `grade`.
-14. **`session[:student_id]` is cleared on attempt completion** — see
-    "Session cleanup" in Birth-Date Passcode. Most students are expected to
-    use their own phone (paper fallback for those without one), but the
-    session must not outlive the attempt regardless.
+14. **Results are re-visitable, not shown once and discarded** (revised —
+    originally "`session[:student_id]` is cleared on attempt completion").
+    The one-time-view design made results practically unreachable again
+    after closing the tab (no saved link, re-auth required a QR rescan).
+    Instead: root (`/`) lists school classes → `StudentEntryController#show`
+    lists a class's tests → `StudentEntryController#results` lists only the
+    students who've actually completed that test (a separate, filtered
+    roster from `TestAssignmentsController#show`'s QR-entry roster, which
+    intentionally lists everyone so they can start/resume) → DDMM passcode
+    re-grants `session[:student_id]` and redirects back into
+    `TestAttemptsController#show`, which no longer clears the
+    session on view. See "Session cleanup" in Birth-Date Passcode for the
+    residual risk this accepts. This also removes the earlier open question
+    about async `long_text` grading (see "Later" section) racing a one-time
+    view — a student who checks back later just sees the completed score.
 15. **Paper/printed test-takers are entirely outside the system** — no
     manual attempt-entry UI in MVP (or currently planned at all). The
     teacher handles printing and grading those separately; nothing about

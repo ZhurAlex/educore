@@ -34,6 +34,9 @@ gem 'pundit'
 # QR code generation for TestAssignment links
 gem 'rqrcode'
 
+# Throttle passcode brute-forcing — see docs/SPEC.md Birth-Date Passcode
+gem 'rack-attack'
+
 gem 'connection_pool', '~> 2.5'
 gem 'sidekiq', '~> 7.3'
 

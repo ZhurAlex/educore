@@ -38,7 +38,7 @@ RSpec.describe 'Questions', type: :request do
       post test_questions_path(other_test), params: {
         question: { body: 'x', answer_type: 'short_text', points: 1, correct_answer: 'y' }
       }
-      expect(response).to redirect_to(root_path)
+      expect(response).to redirect_to(dashboard_path)
     end
   end
 end

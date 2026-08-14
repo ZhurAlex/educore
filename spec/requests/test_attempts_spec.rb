@@ -78,18 +78,17 @@ RSpec.describe 'TestAttempts', type: :request do
       expect(attempt.responses.count).to eq(2)
     end
 
-    it 'lets the student view their result once, then clears the session (Decision #14)' do
+    it 'lets the student revisit their completed result (Decision #14, revised)' do
       attempt = sign_in_as_student!
       patch test_attempt_path(attempt), params: { answers: {} }, as: :json
 
-      # first view after completion still has the session — succeeds
       get test_attempt_path(attempt)
       expect(response).to have_http_status(:success)
       expect(response.body).to match(/Бали/)
 
-      # a later visit (e.g. next student scanning the same device) is not
+      # results are re-visitable now — no longer cleared after one view
       get test_attempt_path(attempt)
-      expect(response).to have_http_status(:forbidden)
+      expect(response).to have_http_status(:success)
     end
   end
 end

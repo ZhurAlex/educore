@@ -10,7 +10,16 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get 'up' => 'rails/health#show', as: :rails_health_check
 
-  root to: 'dashboard#show'
+  get 'dashboard', to: 'dashboard#show', as: :dashboard
+
+  # Public student entry point (docs/SPEC.md Decision #14, revised) — browse
+  # to your *results* without needing a saved QR link: root lists classes,
+  # StudentEntryController#show lists that class's tests, #results lists only
+  # the students who've already completed the chosen test (unlike the QR
+  # roster below, which intentionally lists everyone so they can start).
+  root to: 'student_entry#index'
+  get 'start/:school_class_id', to: 'student_entry#show', as: :student_entry
+  get 'start/:school_class_id/tests/:test_assignment_id', to: 'student_entry#results', as: :student_entry_results
 
   # Teacher-side locale switcher — session-based, since the teacher has a
   # persistent Devise session (see docs/SPEC.md I18n section / Decision #8).

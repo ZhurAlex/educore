@@ -13,13 +13,6 @@ class TestAttemptsController < ApplicationController
 
   def show
     @questions = @test_attempt.test.questions.includes(:options).order(:id) if @test_attempt.in_progress?
-
-    # Decision #14 (docs/SPEC.md): clear the session once the student has
-    # actually seen their result — not in `update`, since Turbo Drive
-    # expects a redirect after a form submission and ignores a rendered
-    # response, and clearing it *before* the redirect would 403 the very
-    # page that redirect points to.
-    session.delete(:student_id) if @test_attempt.completed?
   end
 
   def update

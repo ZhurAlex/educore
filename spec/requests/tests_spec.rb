@@ -23,7 +23,7 @@ RSpec.describe 'Tests', type: :request do
     it "denies access to another teacher's test (Pundit)" do
       test = create(:test, teacher: other_teacher)
       get test_path(test)
-      expect(response).to redirect_to(root_path)
+      expect(response).to redirect_to(dashboard_path)
     end
   end
 

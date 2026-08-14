@@ -27,7 +27,7 @@ RSpec.describe 'Attempts', type: :request do
 
       get test_attempts_path(other_test)
 
-      expect(response).to redirect_to(root_path)
+      expect(response).to redirect_to(dashboard_path)
     end
 
     it 'groups attempts by school class' do
@@ -64,7 +64,7 @@ RSpec.describe 'Attempts', type: :request do
 
       get attempt_path(attempt)
 
-      expect(response).to redirect_to(root_path)
+      expect(response).to redirect_to(dashboard_path)
     end
   end
 end

@@ -1,0 +1,7 @@
+<h1><%= @school_class.name %></h1>
+
+<ul>
+  <% @test_assignments.each do |test_assignment| %>
+    <li><%= link_to test_assignment.test.title, student_entry_results_path(@school_class, test_assignment) %></li>
+  <% end %>
+</ul>

@@ -28,6 +28,13 @@ class ApplicationController < ActionController::Base
 
   def user_not_authorized
     flash[:alert] = t('pundit.not_authorized')
-    redirect_back_or_to(root_path)
+    redirect_back_or_to(dashboard_path)
+  end
+
+  # Devise's default is `root_path`, which is now the public student entry
+  # point (docs/SPEC.md Decision #14, revised) — a signed-in teacher should
+  # land on their own dashboard instead.
+  def after_sign_in_path_for(_resource)
+    dashboard_path
   end
 end

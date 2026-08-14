@@ -35,7 +35,7 @@ RSpec.describe 'Responses', type: :request do
 
       patch response_path(other_response), params: { response: { points_awarded: 99 } }
 
-      expect(response).to redirect_to(root_path)
+      expect(response).to redirect_to(dashboard_path)
     end
   end
 end
