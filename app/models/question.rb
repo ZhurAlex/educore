@@ -17,30 +17,11 @@ class Question < ApplicationRecord
   validate :points_in_half_point_increments
   validate :correct_options, if: :multiple_choice?
 
-  # Auto-grading — see docs/SPEC.md "Question Types and Grading Logic".
-  # Returns the points earned (0 or `points`); no partial credit in MVP.
   def grade(answer_text: nil, option_id: nil)
-    correct =
-      if multiple_choice?
-        options.find(&:correct?)&.id == option_id&.to_i
-      elsif short_text?
-        normalize(answer_text) == normalize(correct_answer)
-      end
-
-    correct ? calculate_points : 0
+    QuestionGrader.new(self).grade(answer_text: answer_text, option_id: option_id)
   end
 
   private
-
-  def calculate_points
-    GeminiApiService.new.check_answer(body, answer_text) if long_text?
-
-    points
-  end
-
-  def normalize(text)
-    text.to_s.strip.downcase.gsub(/[[:punct:]]/, '')
-  end
 
   def points_in_half_point_increments
     return if points.nil?

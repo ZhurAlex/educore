@@ -7,8 +7,8 @@ RSpec.describe Question, type: :model do
     expect(build(:question)).to be_valid
   end
 
-  it 'only supports multiple_choice and short_text' do
-    expect(Question.answer_types.keys).to contain_exactly('multiple_choice', 'short_text')
+  it 'only supports multiple_choice, short_text, long_text' do
+    expect(Question.answer_types.keys).to contain_exactly('multiple_choice', 'short_text', 'long_text')
   end
 
   describe 'validations' do

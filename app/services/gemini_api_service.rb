@@ -3,19 +3,20 @@
 class GeminiApiService
   attr_accessor :client
 
-  SYSTEM_INSTRUCTION = "You are a teacher grading a student's open-ended answer to a test question.
-  Judge whether the answer correctly conveys the expected meaning, not whether
-  it matches one exact phrasing — accept reasonable synonyms, paraphrasing,
-  and minor differences in wording or grammar.
+  SYSTEM_INSTRUCTION = <<~PROMPT
+    You are a teacher grading a student's open-ended answer to a test question.
+    Judge whether the answer correctly conveys the expected meaning, not whether
+    it matches one exact phrasing — accept reasonable synonyms, paraphrasing,
+    and minor differences in wording or grammar.
 
-  Score the answer from 0 to 100:
-  - 100 means fully correct and complete
-  - 0 means entirely incorrect, irrelevant, or left blank
-  - Use the full range in between for partially correct or incomplete answers
+    Score the answer from 0 to 100:
+    - 100 means fully correct and complete
+    - 0 means entirely incorrect, irrelevant, or left blank
+    - Use the full range in between for partially correct or incomplete answers
 
-  Always respond using only the requested JSON structure — no extra text
-  before or after it.
-  "
+    Always respond using only the requested JSON structure — no extra text
+    before or after it.
+  PROMPT
 
   def initialize(model: 'gemini-3.1-flash-lite')
     @client = Gemini.new(
@@ -27,19 +28,23 @@ class GeminiApiService
     )
   end
 
-  def check_answer(question, answer)
-    response = @client.generate_content(contents: contents(question, answer),
-                                        system_instruction: system_instruction,
-                                        generation_config: generation_config)
-    response.dig('candidates', 0, 'content', 'parts', 0, 'text')
+  def check_answer(question_text, answer_text)
+    response = @client.generate_content({
+                                          contents: contents(question_text, answer_text),
+                                          system_instruction: system_instruction,
+                                          generation_config: generation_config
+                                        })
+    JSON.parse(response.dig('candidates', 0, 'content', 'parts', 0, 'text'))
   end
 
   private
 
-  def contents(question, answer)
-    text = "Question: #{question}
-            Student's answer: #{answer}
-            Evaluate this answer."
+  def contents(question_text, answer_text)
+    text = <<~TEXT
+      Question: #{question_text}
+      Student's answer: #{answer_text}
+      Evaluate this answer.
+    TEXT
     { role: 'user', parts: { text: text } }
   end
 

@@ -9,6 +9,9 @@ export function formatAnswersForSubmission(questions, userAnswers) {
       case "short_text":
         acc[q.id] = { "answer_text": userAnswers[q.id] };
         break;
+      case "long_text":
+        acc[q.id] = { "answer_text": userAnswers[q.id] };
+        break;
     }
 
     return acc;
