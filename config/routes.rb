@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
   # Registration is closed — see docs/SPEC.md Decision #11. The Teacher
   # model has no :registerable module, so devise_for already skips those
@@ -53,4 +55,8 @@ Rails.application.routes.draw do
   resources :test_attempts, only: %i[show update]
 
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
+
+  authenticate :teacher do
+    mount Sidekiq::Web => '/sidekiq'
+  end
 end

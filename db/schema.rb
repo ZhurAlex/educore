@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_07_24_213224) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_16_201026) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -43,6 +43,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_07_24_213224) do
     t.decimal "points_awarded", precision: 5, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "feedback"
     t.index ["option_id"], name: "index_responses_on_option_id"
     t.index ["question_id"], name: "index_responses_on_question_id"
     t.index ["test_attempt_id", "question_id"], name: "index_responses_on_test_attempt_id_and_question_id", unique: true

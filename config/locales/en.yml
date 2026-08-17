@@ -177,6 +177,7 @@ en:
       no_questions: "No questions available."
       completed_headline: "Nice work — you're done!"
       completed_note: You can close this page now. Your teacher will see the result.
+      evaluating_note: "Some answers are still being reviewed — your score may still change. Check back later for your final result."
 
   attempts:
     index:
@@ -190,8 +191,14 @@ en:
       answer: Answer
       correct_answer: Correct answer
       points: Points
+      feedback: Feedback
       override: Override
+      grading_status_label: Status
       teacher_overridden: overridden
+      manual_check_required: needs manual check
+      pending: awaiting review
+      auto_graded: auto-graded
+      llm_graded: reviewed by AI
       save: Save
 
   responses:

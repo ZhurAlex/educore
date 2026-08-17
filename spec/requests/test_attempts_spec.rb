@@ -50,7 +50,7 @@ RSpec.describe 'TestAttempts', type: :request do
       expect(response.parsed_body['redirect_url']).to eq(test_attempt_path(attempt))
 
       attempt.reload
-      expect(attempt).to be_completed
+      expect(attempt).to be_evaluating
       expect(attempt.score).to eq(3)
       expect(attempt.grade).to eq(3)
       expect(attempt.responses.count).to eq(2)
@@ -73,7 +73,7 @@ RSpec.describe 'TestAttempts', type: :request do
       expect(response.parsed_body['redirect_url']).to eq(test_attempt_path(attempt))
 
       attempt.reload
-      expect(attempt).to be_completed
+      expect(attempt).to be_evaluating
       expect(attempt.score).to eq(0)
       expect(attempt.responses.count).to eq(2)
     end

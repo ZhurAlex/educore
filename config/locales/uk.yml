@@ -179,6 +179,7 @@ uk:
       no_questions: "Питання відсутні."
       completed_headline: "Молодець — тест завершено!"
       completed_note: Можеш закривати цю сторінку. Вчитель побачить результат.
+      evaluating_note: "Деякі відповіді ще перевіряються — бал може змінитися. Зайди пізніше, щоб побачити підсумковий результат."
 
   attempts:
     index:
@@ -192,8 +193,14 @@ uk:
       answer: Відповідь
       correct_answer: Правильна відповідь
       points: Бали
+      feedback: Коментар
       override: Виправити
+      grading_status_label: Статус
       teacher_overridden: виправлено
+      manual_check_required: потрібна ручна перевірка
+      pending: очікує перевірки
+      auto_graded: оцінено автоматично
+      llm_graded: перевірено ШІ
       save: Зберегти
 
   responses:

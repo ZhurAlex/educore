@@ -18,10 +18,11 @@ class TestAttemptsController < ApplicationController
   def update
     if @test_attempt.in_progress?
       ActiveRecord::Base.transaction do
-        @test_attempt.test.questions.find_each { |question| grade_question(question) }
-        @test_attempt.update!(status: :completed, completed_at: Time.current)
+        @test_attempt.test.questions.each { |question| grade_question(question) }
+        @test_attempt.update!(status: :evaluating, completed_at: Time.current)
         @test_attempt.recompute_score!
       end
+      QuestionGraderJob.perform_later(@test_attempt.id)
     end
 
     render json: { redirect_url: test_attempt_path(@test_attempt) }
@@ -34,8 +35,12 @@ class TestAttemptsController < ApplicationController
     response = @test_attempt.responses.find_or_initialize_by(question: question)
     response.answer_text = answer[:answer_text]
     response.option_id = answer[:option_id]
-    response.points_awarded = question.grade(answer_text: answer[:answer_text], option_id: answer[:option_id])
-    response.grading_status = :auto_graded
+    if question.long_text?
+      response.grading_status = :pending
+    else
+      response.points_awarded = question.grade(answer_text: answer[:answer_text], option_id: answer[:option_id]).points
+      response.grading_status = :auto_graded
+    end
     response.save!
   end
 

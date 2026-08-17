@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class TestAttempt < ApplicationRecord
-  # A distinct "graded" state returns once long_text/manual review is
-  # reintroduced — see docs/SPEC.md Data Model note on TestAttempt.
-  enum :status, { in_progress: 0, completed: 1 }
+  # :evaluating covers the gap between submission and QuestionGraderJob
+  # finishing long_text grading — sync-graded questions already have a
+  # score, but it's not final until status flips to :completed.
+  enum :status, { in_progress: 0, completed: 1, evaluating: 2 }
 
   belongs_to :student
   belongs_to :test

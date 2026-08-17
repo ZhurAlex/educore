@@ -34,7 +34,8 @@ RSpec.describe Response, type: :model do
     expect(duplicate).not_to be_valid
   end
 
-  it 'only has pending_review/llm_graded reintroduced with long_text (Decision #12)' do
-    expect(Response.grading_statuses.keys).to contain_exactly('auto_graded', 'teacher_overridden')
+  it 'only has pending_review/llm_graded reintroduced with long_text' do
+    statuses = %w[auto_graded teacher_overridden llm_graded pending manual_check_required]
+    expect(Response.grading_statuses.keys).to contain_exactly(*statuses)
   end
 end

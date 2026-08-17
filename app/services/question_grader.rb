@@ -3,6 +3,12 @@
 class QuestionGrader
   attr_reader :question
 
+  GradeResult = Data.define(:points, :feedback, :error) do
+    def initialize(points: 0, feedback: nil, error: nil)
+      super
+    end
+  end
+
   def initialize(question)
     @question = question
   end
@@ -20,15 +26,24 @@ class QuestionGrader
       elsif question.short_text?
         normalize(answer_text) == normalize(question.correct_answer)
       end
-
-    correct ? question.points : 0
+    GradeResult.new(
+      points: correct ? question.points : 0
+    )
   end
 
   def grade_by_llm(answer_text)
-    return 0 if answer_text.blank?
+    return GradeResult.new if answer_text.blank?
 
-    result = GeminiApiService.new.check_answer(question.body, answer_text)
-    ((question.points * (result['score'] / 100.0)) * 2).round / 2.0
+    begin
+      result = GeminiApiService.new.check_answer(question.body, answer_text)
+    rescue GeminiApiService::GradingError => e
+      return GradeResult.new(error: e.message)
+    end
+
+    GradeResult.new(
+      points: ((question.points * (result['score'] / 100.0)) * 2).round / 2.0,
+      feedback: result['feedback']
+    )
   end
 
   def normalize(text)

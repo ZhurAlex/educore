@@ -74,19 +74,19 @@ RSpec.describe Question, type: :model do
       let(:question) { create(:question, answer_type: :short_text, correct_answer: 'Paris', points: 2) }
 
       it 'awards full points on an exact match' do
-        expect(question.grade(answer_text: 'Paris')).to eq(2)
+        expect(question.grade(answer_text: 'Paris')).to eq(QuestionGrader::GradeResult.new(points: 2))
       end
 
       it 'normalizes case, whitespace and punctuation before comparing' do
-        expect(question.grade(answer_text: '  paris!! ')).to eq(2)
+        expect(question.grade(answer_text: '  paris!! ')).to eq(QuestionGrader::GradeResult.new(points: 2))
       end
 
       it 'awards zero on a mismatch' do
-        expect(question.grade(answer_text: 'London')).to eq(0)
+        expect(question.grade(answer_text: 'London')).to eq(QuestionGrader::GradeResult.new(points: 0))
       end
 
       it 'awards zero on a blank answer' do
-        expect(question.grade(answer_text: nil)).to eq(0)
+        expect(question.grade(answer_text: nil)).to eq(QuestionGrader::GradeResult.new(points: 0))
       end
     end
 
@@ -96,15 +96,15 @@ RSpec.describe Question, type: :model do
       let(:wrong_option) { question.options.find { |o| !o.correct? } }
 
       it 'awards full points for the correct option' do
-        expect(question.grade(option_id: correct_option.id)).to eq(1)
+        expect(question.grade(option_id: correct_option.id)).to eq(QuestionGrader::GradeResult.new(points: 1))
       end
 
       it 'awards zero for an incorrect option' do
-        expect(question.grade(option_id: wrong_option.id)).to eq(0)
+        expect(question.grade(option_id: wrong_option.id)).to eq(QuestionGrader::GradeResult.new(points: 0))
       end
 
       it 'awards zero when no option was picked' do
-        expect(question.grade(option_id: nil)).to eq(0)
+        expect(question.grade(option_id: nil)).to eq(QuestionGrader::GradeResult.new(points: 0))
       end
     end
   end

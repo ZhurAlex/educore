@@ -179,6 +179,7 @@ ru:
       no_questions: "Вопросы отсутствуют."
       completed_headline: "Молодец — тест завершён!"
       completed_note: Можешь закрывать эту страницу. Учитель увидит результат.
+      evaluating_note: "Некоторые ответы ещё проверяются — балл может измениться. Зайди позже, чтобы увидеть итоговый результат."
 
   attempts:
     index:
@@ -192,8 +193,14 @@ ru:
       answer: Ответ
       correct_answer: Правильный ответ
       points: Баллы
+      feedback: Комментарий
       override: Исправить
+      grading_status_label: Статус
       teacher_overridden: исправлено
+      manual_check_required: нужна проверка вручную
+      pending: ожидает проверки
+      auto_graded: оценено автоматически
+      llm_graded: проверено ИИ
       save: Сохранить
 
   responses:

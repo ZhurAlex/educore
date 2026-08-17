@@ -12,7 +12,11 @@
       <span><%= t("attempts.index.score") %>: <strong><%= @test_attempt.score %></strong></span>
       <span><%= t("attempts.index.grade") %>: <strong><%= @test_attempt.grade %></strong></span>
     </p>
-    <p class="results-note"><%= t(".completed_note") %></p>
+    <% if @test_attempt.evaluating? %>
+      <p class="results-note results-pending"><%= t(".evaluating_note") %></p>
+    <% else %>
+      <p class="results-note"><%= t(".completed_note") %></p>
+    <% end %>
   </div>
 <% end %>
 <%= javascript_include_tag "test_attempt" %>

@@ -316,6 +316,17 @@ tr:last-child td {
   margin-left: 0.4rem;
 }
 
+.badge-danger {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+/* Gemini grading failed and needs a teacher's manual review — flagged both
+   by color and by the .badge-danger label above, not color alone. */
+tr.needs-review td {
+  background: var(--color-danger-bg);
+}
+
 /* QR code */
 
 .qr-code svg {
