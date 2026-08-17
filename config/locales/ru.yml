@@ -1,4 +1,13 @@
 ru:
+  student_entry:
+    index:
+      title: Выберите свой класс
+
+  student_history:
+    index:
+      title: "Тесты — %{name}"
+      empty: Пока нет попыток.
+
   nav:
     brand: Educore
     school_classes: Классы
@@ -38,7 +47,13 @@ ru:
         body: Вопрос
         answer_type: Тип ответа
         points: Баллы
-        correct_answer: "Правильный ответ (только short_text)"
+        correct_answer: "Правильный / эталонный ответ (short_text, long_text)"
+    errors:
+      models:
+        test_attempt:
+          attributes:
+            test_id:
+              active_attempt_exists: уже есть активная попытка прохождения этого теста
 
   dashboard:
     show:
@@ -166,6 +181,8 @@ ru:
       no_questions: "Вопросы отсутствуют."
       completed_headline: "Молодец — тест завершён!"
       completed_note: Можешь закрывать эту страницу. Учитель увидит результат.
+      evaluating_note: "Некоторые ответы ещё проверяются — балл может измениться. Зайди позже, чтобы увидеть итоговый результат."
+      still_reviewing: Ещё проверяется…
 
   attempts:
     index:
@@ -179,8 +196,14 @@ ru:
       answer: Ответ
       correct_answer: Правильный ответ
       points: Баллы
+      feedback: Комментарий
       override: Исправить
+      grading_status_label: Статус
       teacher_overridden: исправлено
+      manual_check_required: нужна проверка вручную
+      pending: ожидает проверки
+      auto_graded: оценено автоматически
+      llm_graded: проверено ИИ
       save: Сохранить
 
   responses:

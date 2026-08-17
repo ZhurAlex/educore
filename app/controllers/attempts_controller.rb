@@ -1,18 +1,22 @@
+# frozen_string_literal: true
+
 class AttemptsController < ApplicationController
-  before_action :set_test, only: [ :index ]
-  before_action :set_attempt, only: [ :show ]
+  before_action :set_test, only: [:index]
+  before_action :set_attempt, only: [:show]
 
   def index
     # Explicit :show? — a bare `authorize @test` here would resolve to
     # TestPolicy#index? (named after this action), which only checks
     # "signed in", not ownership. We need the ownership check.
     authorize @test, :show?
-    @attempts_by_class = @test.test_attempts.includes(student: :school_class).order(:created_at).group_by { |a| a.student.school_class.name }
+    @attempts_by_class = @test.test_attempts.includes(student: :school_class).order(:created_at).group_by do |a|
+      a.student.school_class.name
+    end
   end
 
   def show
     authorize @attempt
-    @responses = @attempt.responses.includes(:question, :option).sort_by { |r| r.question_id }
+    @responses = @attempt.responses.includes(:question, :option).sort_by(&:question_id)
   end
 
   private

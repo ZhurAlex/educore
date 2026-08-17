@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Test < ApplicationRecord
   # MVP locales — see docs/SPEC.md Decision #5. UI chrome only; test content
   # (title/questions) stays in whatever language the teacher wrote it in.

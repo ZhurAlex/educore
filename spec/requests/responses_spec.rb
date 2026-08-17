@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "Responses", type: :request do
+RSpec.describe 'Responses', type: :request do
   let(:teacher) { create(:teacher) }
   let(:other_teacher) { create(:teacher) }
   let(:test) { create(:test, teacher: teacher) }
@@ -10,7 +12,7 @@ RSpec.describe "Responses", type: :request do
 
   before { sign_in teacher }
 
-  describe "PATCH /responses/:id" do
+  describe 'PATCH /responses/:id' do
     it "overrides points_awarded, marks teacher_overridden, and recomputes the attempt's score/grade" do
       patch response_path(response_record), params: { response: { points_awarded: 2 } }
 
@@ -33,7 +35,7 @@ RSpec.describe "Responses", type: :request do
 
       patch response_path(other_response), params: { response: { points_awarded: 99 } }
 
-      expect(response).to redirect_to(root_path)
+      expect(response).to redirect_to(dashboard_path)
     end
   end
 end

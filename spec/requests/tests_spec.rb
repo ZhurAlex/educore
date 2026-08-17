@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "Tests", type: :request do
+RSpec.describe 'Tests', type: :request do
   let(:teacher) { create(:teacher) }
   let(:other_teacher) { create(:teacher) }
 
   before { sign_in teacher }
 
-  describe "GET /tests" do
+  describe 'GET /tests' do
     it "only lists the current teacher's own tests (Decision #10)" do
-      mine = create(:test, teacher: teacher, title: "My Test")
+      mine = create(:test, teacher: teacher, title: 'My Test')
       create(:test, teacher: other_teacher, title: "Someone Else's Test")
 
       get tests_path
@@ -17,19 +19,19 @@ RSpec.describe "Tests", type: :request do
     end
   end
 
-  describe "GET /tests/:id" do
+  describe 'GET /tests/:id' do
     it "denies access to another teacher's test (Pundit)" do
       test = create(:test, teacher: other_teacher)
       get test_path(test)
-      expect(response).to redirect_to(root_path)
+      expect(response).to redirect_to(dashboard_path)
     end
   end
 
-  describe "POST /tests" do
-    it "creates a test owned by the current teacher" do
-      expect {
-        post tests_path, params: { test: { title: "English quiz", locale: "uk" } }
-      }.to change(teacher.tests, :count).by(1)
+  describe 'POST /tests' do
+    it 'creates a test owned by the current teacher' do
+      expect do
+        post tests_path, params: { test: { title: 'English quiz', locale: 'uk' } }
+      end.to change(teacher.tests, :count).by(1)
     end
   end
 end

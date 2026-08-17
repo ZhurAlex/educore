@@ -5,6 +5,15 @@ en:
     tests: Tests
     sign_out: Sign out
 
+  student_entry:
+    index:
+      title: Choose your class
+
+  student_history:
+    index:
+      title: "%{name}'s tests"
+      empty: No attempts yet.
+
   common:
     edit: Edit
     delete: Delete
@@ -38,7 +47,13 @@ en:
         body: Question
         answer_type: Answer type
         points: Points
-        correct_answer: "Correct answer (short_text only)"
+        correct_answer: "Correct answer / reference answer (short_text, long_text)"
+    errors:
+      models:
+        test_attempt:
+          attributes:
+            test_id:
+              active_attempt_exists: already has an active attempt for this test
 
   dashboard:
     show:
@@ -164,6 +179,8 @@ en:
       no_questions: "No questions available."
       completed_headline: "Nice work — you're done!"
       completed_note: You can close this page now. Your teacher will see the result.
+      evaluating_note: "Some answers are still being reviewed — your score may still change. Check back later for your final result."
+      still_reviewing: Still being reviewed…
 
   attempts:
     index:
@@ -177,8 +194,14 @@ en:
       answer: Answer
       correct_answer: Correct answer
       points: Points
+      feedback: Feedback
       override: Override
+      grading_status_label: Status
       teacher_overridden: overridden
+      manual_check_required: needs manual check
+      pending: awaiting review
+      auto_graded: auto-graded
+      llm_graded: reviewed by AI
       save: Save
 
   responses:

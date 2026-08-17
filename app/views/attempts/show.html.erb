@@ -9,13 +9,15 @@
       <th><%= t(".answer") %></th>
       <th><%= t(".correct_answer") %></th>
       <th><%= t(".points") %></th>
+      <th><%= t(".grading_status_label") %></th>
+      <th><%= t(".feedback") %></th>
       <th><%= t(".override") %></th>
     </tr>
   </thead>
   <tbody>
     <% @responses.each do |response| %>
       <% question = response.question %>
-      <tr>
+      <tr class="<%= "needs-review" if response.manual_check_required? %>">
         <td><%= question.body %></td>
         <td>
           <%= question.multiple_choice? ? response.option&.body : response.answer_text %>
@@ -29,9 +31,18 @@
             <span class="badge"><%= t(".teacher_overridden") %></span>
           <% end %>
         </td>
+        <td><%= t(".#{response.grading_status}") %></td>
+        <td><%= response.feedback %></td>
         <td>
           <%= form_with model: response, url: response_path(response), method: :patch do |form| %>
-            <%= form.number_field :points_awarded, step: 0.5, min: 0 %>
+            <div class="field">
+              <%= form.label :points_awarded, t(".points") %>
+              <%= form.number_field :points_awarded, step: 0.5, min: 0 %>
+            </div>
+            <div class="field">
+              <%= form.label :feedback, t(".feedback") %>
+              <%= form.text_area :feedback, rows: 2 %>
+            </div>
             <%= form.submit t(".save") %>
           <% end %>
         </td>

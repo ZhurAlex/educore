@@ -12,7 +12,45 @@
       <span><%= t("attempts.index.score") %>: <strong><%= @test_attempt.score %></strong></span>
       <span><%= t("attempts.index.grade") %>: <strong><%= @test_attempt.grade %></strong></span>
     </p>
-    <p class="results-note"><%= t(".completed_note") %></p>
+    <% if @test_attempt.evaluating? %>
+      <p class="results-note results-pending"><%= t(".evaluating_note") %></p>
+    <% else %>
+      <p class="results-note"><%= t(".completed_note") %></p>
+    <% end %>
   </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th><%= t("attempts.show.question") %></th>
+        <th><%= t("attempts.show.answer") %></th>
+        <th><%= t("attempts.show.correct_answer") %></th>
+        <th><%= t("attempts.show.points") %></th>
+        <th><%= t("attempts.show.feedback") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @responses.each do |response| %>
+        <% question = response.question %>
+        <tr>
+          <td><%= question.body %></td>
+          <td>
+            <%= question.multiple_choice? ? response.option&.body : response.answer_text %>
+          </td>
+          <td>
+            <%= question.multiple_choice? ? question.options.find(&:correct?)&.body : question.correct_answer %>
+          </td>
+          <td><%= response.points_awarded %> / <%= question.points %></td>
+          <td>
+            <% if response.pending? %>
+              <%= t(".still_reviewing") %>
+            <% else %>
+              <%= response.feedback %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <% end %>
 <%= javascript_include_tag "test_attempt" %>

@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "Attempts", type: :request do
+RSpec.describe 'Attempts', type: :request do
   let(:teacher) { create(:teacher) }
   let(:other_teacher) { create(:teacher) }
   let(:test) { create(:test, teacher: teacher) }
@@ -8,7 +10,7 @@ RSpec.describe "Attempts", type: :request do
 
   before { sign_in teacher }
 
-  describe "GET /tests/:test_id/attempts" do
+  describe 'GET /tests/:test_id/attempts' do
     it "lists attempts for the teacher's own test" do
       attempt = create(:test_attempt, :completed, test: test, student: student)
 
@@ -25,10 +27,10 @@ RSpec.describe "Attempts", type: :request do
 
       get test_attempts_path(other_test)
 
-      expect(response).to redirect_to(root_path)
+      expect(response).to redirect_to(dashboard_path)
     end
 
-    it "groups attempts by school class" do
+    it 'groups attempts by school class' do
       class_a = create(:school_class)
       class_b = create(:school_class)
       student_a = create(:student, school_class: class_a)
@@ -43,12 +45,12 @@ RSpec.describe "Attempts", type: :request do
     end
   end
 
-  describe "GET /attempts/:id" do
-    it "shows per-question detail" do
+  describe 'GET /attempts/:id' do
+    it 'shows per-question detail' do
       mc_question = create(:question, :multiple_choice, test: test)
       response_record = create(:response, :multiple_choice,
-        test_attempt: create(:test_attempt, test: test, student: student),
-        question: mc_question)
+                               test_attempt: create(:test_attempt, test: test, student: student),
+                               question: mc_question)
 
       get attempt_path(response_record.test_attempt)
 
@@ -62,7 +64,7 @@ RSpec.describe "Attempts", type: :request do
 
       get attempt_path(attempt)
 
-      expect(response).to redirect_to(root_path)
+      expect(response).to redirect_to(dashboard_path)
     end
   end
 end

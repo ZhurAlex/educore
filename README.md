@@ -3,7 +3,8 @@
 A student testing app for the classroom: a teacher builds tests, assigns
 them to a class, and prints/projects a QR code. Students scan it, pick their
 name, confirm with a light DDMM passcode, and take the test — multiple
-choice and short answer questions are graded automatically.
+choice and short answer questions are graded automatically, and open-ended
+answers are graded by an LLM (Gemini) in the background.
 
 Full design rationale and decisions log: [docs/SPEC.md](docs/SPEC.md).
 
@@ -22,9 +23,19 @@ account above to sign in.
 
 - Ruby 3.3.0 / Rails 7.1
 - PostgreSQL + Redis (both via Docker Compose for local dev)
-- Sidekiq — background jobs (currently: sending Devise emails via `deliver_later`,
-  so a slow mail send doesn't block the request; see SPEC's "Later" section
-  for the next thing it'll carry — LLM grading)
+- Sidekiq — background jobs: `QuestionGraderJob` (long_text answers graded
+  by Gemini, see below — a slow/failing LLM call must not block the
+  request or hold a DB transaction open) and Devise's `deliver_later`
+  emails. **Not yet configured in production** — see SPEC's "LLM Grading"
+  section for that gap. `Sidekiq::Web` is mounted at `/sidekiq`, behind
+  teacher auth.
+- Gemini (`gemini-ai` gem, via `GeminiApiService`) — grades open-ended
+  (`long_text`) answers: 0–100 score converted to the question's point
+  scale, plus written feedback shown to both student and teacher. See SPEC's
+  "LLM Grading" section for the full pipeline (async job, error handling,
+  `manual_check_required` fallback).
+- rack-attack — throttles the passcode-entry endpoint (public since the
+  student-entry redesign, see SPEC Decision #14)
 - Hotwire (Turbo + Stimulus) for the teacher-facing admin UI, no bundler
   needed there (importmap-rails)
 - React (esbuild via `jsbundling-rails`) for the student test-taking page —
@@ -34,8 +45,8 @@ account above to sign in.
 - ActionMailer + `letter_opener_web` — emails are never really sent in dev;
   view them at `/letter_opener` instead
 - RSpec + FactoryBot + Faker, coverage tracked with SimpleCov
-- RuboCop (`rubocop-rails-omakase`) — lint/style, runs in CI as a separate
-  job from the test suite
+- RuboCop (`rubocop` + `rubocop-rails`) — lint/style, runs in CI as a
+  separate job from the test suite
 - I18n: `uk` (default), `ru`, `en` — UI chrome only, see SPEC's I18n section
 - GitHub Actions CI — runs RSpec and RuboCop on every push/PR (see
   `.github/workflows/ci.yml`)
@@ -60,6 +71,18 @@ bin/rails db:prepare             # creates + migrates development and test DBs
 bin/rails db:seed                # creates the teacher account + demo data (dev only)
 ```
 
+Add a Gemini API key to `.env` (from [Google AI Studio](https://aistudio.google.com/apikey))
+to grade `long_text` questions:
+
+```
+GEMINI_API_KEY=your-key-here
+```
+
+Without it, `long_text` submissions still go through the full async flow —
+they just fail at the Gemini request and end up flagged
+`manual_check_required` for the teacher to grade by hand (see SPEC's "LLM
+Grading" section).
+
 `db:seed` prints the teacher login. Defaults (override via `SEED_TEACHER_EMAIL` /
 `SEED_TEACHER_PASSWORD` / `SEED_TEACHER_NAME`):
 
@@ -75,7 +98,8 @@ server, and the Sidekiq worker (separate process, not part of `rails server`):
 docker compose up -d       # if not already running
 bin/rails server           # terminal 1
 bundle exec sidekiq        # terminal 2 — without this, background jobs
-                           # (e.g. password reset emails) queue up and never run
+                           # (password reset emails, long_text grading)
+                           # queue up and never run
 ```
 
 Visit `http://localhost:3000` and sign in with the seeded teacher account
@@ -110,6 +134,6 @@ bundle exec rubocop       # lint/style — same check CI runs
   read it before making structural changes.
 - Registration is intentionally closed (single-teacher portfolio project,
   see SPEC Decision #11) — there is no sign-up flow.
-- `long_text` questions and LLM-assisted grading are deferred (SPEC
-  Decision #12) — MVP only supports `multiple_choice` and `short_text`,
-  both auto-graded.
+- `long_text` grading logic lives in `app/services/` (`QuestionGrader`,
+  `GeminiApiService`), not on the `Question`/`Response` models — see SPEC's
+  "LLM Grading" section before touching it.

@@ -1,4 +1,13 @@
 uk:
+  student_entry:
+    index:
+      title: Обери свій клас
+
+  student_history:
+    index:
+      title: "Тести — %{name}"
+      empty: Поки що немає спроб.
+
   nav:
     brand: Educore
     school_classes: Класи
@@ -38,7 +47,13 @@ uk:
         body: Питання
         answer_type: Тип відповіді
         points: Бали
-        correct_answer: "Правильна відповідь (лише short_text)"
+        correct_answer: "Правильна / еталонна відповідь (short_text, long_text)"
+    errors:
+      models:
+        test_attempt:
+          attributes:
+            test_id:
+              active_attempt_exists: вже є активна спроба проходження цього тесту
 
   dashboard:
     show:
@@ -166,6 +181,8 @@ uk:
       no_questions: "Питання відсутні."
       completed_headline: "Молодець — тест завершено!"
       completed_note: Можеш закривати цю сторінку. Вчитель побачить результат.
+      evaluating_note: "Деякі відповіді ще перевіряються — бал може змінитися. Зайди пізніше, щоб побачити підсумковий результат."
+      still_reviewing: Ще перевіряється…
 
   attempts:
     index:
@@ -179,8 +196,14 @@ uk:
       answer: Відповідь
       correct_answer: Правильна відповідь
       points: Бали
+      feedback: Коментар
       override: Виправити
+      grading_status_label: Статус
       teacher_overridden: виправлено
+      manual_check_required: потрібна ручна перевірка
+      pending: очікує перевірки
+      auto_graded: оцінено автоматично
+      llm_graded: перевірено ШІ
       save: Зберегти
 
   responses:

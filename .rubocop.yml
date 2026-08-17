@@ -1,2 +1,31 @@
-inherit_gem:
-  rubocop-rails-omakase: rubocop.yml
+plugins:
+  - rubocop-rails
+
+AllCops:
+  TargetRubyVersion: 3.3
+  NewCops: enable
+
+# Comments only when the "why" isn't obvious — not a mandatory docstring
+# on every class regardless of whether it adds real information.
+Style/Documentation:
+  Enabled: false
+
+# %{name} (not %<name>s) is what Rails I18n interpolation uses in the
+# locale files, and what the JS-side interpolate() regex expects to match
+# (see app/javascript/react/translations_context.js) — switching would
+# require updating both sides for no real benefit.
+Style/FormatStringToken:
+  Enabled: false
+
+# All Metrics cops are size/complexity heuristics (line counts, parameter
+# counts, nesting depth) — none check anything architectural. Not worth
+# refactoring the whole codebase against right now.
+Metrics:
+  Enabled: false
+
+# The two long lines here are commented-out example values from the Devise
+# installer (secret_key/pepper placeholders), not code we wrote — not worth
+# manually rewrapping generator boilerplate.
+Layout/LineLength:
+  Exclude:
+    - 'config/initializers/devise.rb'

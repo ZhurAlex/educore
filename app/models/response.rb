@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class Response < ApplicationRecord
   # pending_review/llm_graded return with long_text — see docs/SPEC.md
   # Decision #12.
-  enum grading_status: { auto_graded: 0, teacher_overridden: 1 }
+  enum :grading_status, { auto_graded: 0, teacher_overridden: 1, llm_graded: 2, pending: 3, manual_check_required: 4 }
 
   belongs_to :test_attempt
   belongs_to :question

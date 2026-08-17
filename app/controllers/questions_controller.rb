@@ -1,9 +1,15 @@
+# frozen_string_literal: true
+
 class QuestionsController < ApplicationController
-  before_action :set_test, only: [ :new, :create ]
-  before_action :set_question, only: [ :edit, :update, :destroy ]
+  before_action :set_test, only: %i[new create]
+  before_action :set_question, only: %i[edit update destroy]
 
   def new
     @question = @test.questions.new
+    authorize @question
+  end
+
+  def edit
     authorize @question
   end
 
@@ -12,21 +18,17 @@ class QuestionsController < ApplicationController
     authorize @question
 
     if @question.save
-      redirect_to @test, notice: t(".success")
+      redirect_to @test, notice: t('.success')
     else
       render :new, status: :unprocessable_content
     end
-  end
-
-  def edit
-    authorize @question
   end
 
   def update
     authorize @question
 
     if @question.update(question_params)
-      redirect_to @question.test, notice: t(".success")
+      redirect_to @question.test, notice: t('.success')
     else
       render :edit, status: :unprocessable_content
     end
@@ -36,7 +38,7 @@ class QuestionsController < ApplicationController
     authorize @question
     test = @question.test
     @question.destroy
-    redirect_to test, notice: t(".success")
+    redirect_to test, notice: t('.success')
   end
 
   private
@@ -52,7 +54,7 @@ class QuestionsController < ApplicationController
   def question_params
     params.require(:question).permit(
       :body, :answer_type, :points, :correct_answer,
-      options_attributes: [ :id, :body, :correct, :_destroy ]
+      options_attributes: %i[id body correct _destroy]
     )
   end
 end

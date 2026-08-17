@@ -34,10 +34,15 @@ self-implemented stage.
    else's behalf as a prank.
 5. On a match — the test starts. Student answers questions (see question
    types below).
-6. On completion — the attempt is scored automatically, and the result
-   becomes visible to the teacher in the admin panel.
-7. Teacher reviews results, optionally overrides the auto-awarded points on
-   individual questions — the final grade recomputes automatically.
+6. On completion — auto-gradable answers are scored immediately; if the test
+   has `long_text` questions, those are graded asynchronously (see "LLM
+   Grading" below) and the attempt briefly shows as still-being-reviewed
+   before the final score is ready. The result becomes visible to the
+   teacher in the admin panel either way.
+7. Teacher reviews results, optionally overrides the auto-awarded points
+   and/or feedback on individual questions — the final grade recomputes
+   automatically. Student can also revisit their own results later — see
+   Decision #14.
 
 ---
 
@@ -109,9 +114,12 @@ TestAssignment
     (test, school class) pair so the student roster shown is the right one
 
 Question
-  - test_id, body, answer_type (enum: multiple_choice / short_text — long_text
-    deferred to "Later", see below)
-  - correct_answer (reference answer for short_text normalization/compare)
+  - test_id, body, answer_type (enum: multiple_choice / short_text / long_text
+    — see "Question Types and Grading Logic" below)
+  - correct_answer (required for both short_text and long_text, different
+    use: exact normalize+compare for short_text, a reference answer/rubric
+    passed to Gemini for long_text — not used for multiple_choice, which
+    uses Options instead. See "LLM Grading" below.)
   - points (decimal, minimum 0.5, step 0.5 — question weight)
   has_many :options (for multiple_choice)
 
@@ -119,10 +127,12 @@ Option
   - question_id, body, correct (boolean)
 
 TestAttempt
-  - student_id, test_id, status (in_progress / completed — with only
-    auto-gradable question types in MVP, "completed" already means fully
-    scored; a distinct "graded" state returns once long_text/manual review
-    is reintroduced)
+  - student_id, test_id, status (in_progress / evaluating / completed).
+    `evaluating` covers the gap between submission and `QuestionGraderJob`
+    finishing long_text grading — auto-gradable responses already have a
+    score at that point, but it isn't final until the job flips the status
+    to `completed`. A test with no long_text questions never spends visible
+    time in `evaluating` (the job still runs, but has nothing to grade).
   - score (decimal — sum of Response#points_awarded, computed automatically
     on completion; can be fractional, e.g. 8.5, since points are in 0.5
     increments; round up/ceiling, not standard rounding, wherever a whole
@@ -138,11 +148,15 @@ TestAttempt
 
 Response
   - test_attempt_id, question_id
-  - answer_text (for short_text) or option_id (for multiple_choice)
-  - grading_status (enum: auto_graded, teacher_overridden — teacher can
-    manually adjust points_awarded for any question after the fact;
-    pending_review/llm_graded return with long_text in "Later")
+  - answer_text (for short_text/long_text) or option_id (for multiple_choice)
+  - grading_status (enum: auto_graded, teacher_overridden, pending,
+    llm_graded, manual_check_required — see "LLM Grading" below for the
+    long_text-specific values)
   - points_awarded
+  - feedback (text, nullable) — Gemini's explanation for a long_text score,
+    or a teacher's own note; same field either way, teacher edits overwrite
+    it in place (mirrors how `points_awarded` + `teacher_overridden` already
+    works, no separate "original vs edited" history is kept)
 ```
 
 **Ownership model:** `SchoolClass` and `Student` are **shared** across all teachers
@@ -158,21 +172,76 @@ scope for MVP.
 
 ## Question Types and Grading Logic
 
-**MVP ships `multiple_choice` and `short_text` only** — both fully
-auto-gradable, so a `TestAttempt` is scored the moment it's submitted, no
-manual review step needed. `long_text` is deferred entirely to "Later"
-(it only makes sense once paired with manual or LLM grading — see below).
+All three answer types are auto-graded — `multiple_choice`/`short_text`
+synchronously at submission, `long_text` asynchronously via an LLM.
 
-| Type | MVP Grading | Later |
-|---|---|---|
-| `multiple_choice` | Automatic, exact match against the `correct` option | — |
-| `short_text` | Automatic: normalize (lowercase, trim, strip punctuation) + compare to `correct_answer` | — |
-| `long_text` | *(not in MVP)* | New answer_type + `pending_review`/`llm_graded` statuses. Teacher grades manually in the admin panel, or a separate `AnswerGraderService` takes the question + grading criteria + student's answer, sends it to an LLM provider, and returns a score plus feedback. Reuse the provider-with-fallback pattern from the TeacherBot project. |
+| Type | Grading |
+|---|---|
+| `multiple_choice` | Automatic, exact match against the `correct` option |
+| `short_text` | Automatic: normalize (lowercase, trim, strip punctuation) + compare to `correct_answer` |
+| `long_text` | Asynchronous, via Gemini — see "LLM Grading" below |
+
+Grading logic itself lives in `QuestionGrader` (`app/services/`), not on the
+`Question` model — `Question#grade` is a one-line delegator. `QuestionGrader#grade`
+returns a `GradeResult` (`Data.define(:points, :feedback, :error)`), the same
+shape regardless of question type, so callers never branch on answer_type to
+know what they got back.
 
 Regardless of type, **the teacher can always manually override
-`points_awarded` for any individual response** after auto-grading — this is
-what `Response#grading_status: teacher_overridden` is for, independent of
-whether/when `long_text` gets added.
+`points_awarded` and `feedback` for any individual response** after
+auto-grading — this is what `Response#grading_status: teacher_overridden` is
+for.
+
+---
+
+## LLM Grading (`long_text`)
+
+Submitting a test grades `multiple_choice`/`short_text` responses
+synchronously, in the same request — but a `long_text` response requires an
+HTTP round-trip to Gemini, which must not block that request or hold the DB
+transaction open. So grading splits into two phases:
+
+1. **Synchronous** (`TestAttemptsController#update`): auto-gradable
+   responses are scored immediately; `long_text` responses are persisted
+   with `answer_text` and `grading_status: pending`, no score yet. The
+   attempt moves to `status: evaluating` (not `completed`), and
+   `QuestionGraderJob.perform_later(test_attempt.id)` is enqueued
+   unconditionally — even for attempts with no `long_text` questions, so
+   there's only one code path to `completed` rather than a branch in the
+   controller for "does this attempt need grading."
+2. **Asynchronous** (`QuestionGraderJob`, Sidekiq): loads the attempt's
+   `pending` responses, grades each via `QuestionGrader`, and once done
+   moves the attempt to `status: completed` and recomputes `score`/`grade`.
+   An attempt with nothing pending reaches `completed` immediately — the
+   loop is a no-op.
+
+**Provider integration** (`GeminiApiService`, `app/services/`): sends the
+question body, the teacher's `correct_answer` (a reference answer/rubric —
+required for `long_text` questions, same field short_text uses for exact
+comparison, just interpreted differently) and the student's answer to Gemini
+(`gemini-ai` gem), with `response_mime_type: 'application/json'` and a
+`response_schema` requiring `score` (integer) and `feedback` (string, with a
+schema-level description telling the model to answer in the question's
+language, not the answer's — relevant for translation-exercise questions).
+The 0–100 `score` Gemini returns is converted to the question's point scale
+and rounded to the nearest 0.5 in Ruby (`QuestionGrader`), not asked of the
+model directly.
+
+**Failure handling**: `GeminiApiService` validates its own response (missing
+text, invalid JSON, missing `score`, `score` not an Integer in `0..100`) and
+wraps every failure — validation or a raised `Faraday::Error`/`JSON::ParserError`
+— into one `GeminiApiService::GradingError`. `QuestionGrader` catches that
+and returns a `GradeResult` with `error` set instead of raising further, so a
+single bad Gemini call can't crash `QuestionGraderJob` for an attempt with
+multiple long_text responses. `QuestionGraderJob` maps that into
+`grading_status: manual_check_required` (flagged in red in the teacher's
+per-response table) rather than leaving a response silently ungraded.
+
+**Known gap**: Sidekiq needs Redis and a separate worker process
+(`bundle exec sidekiq`) in every environment it runs in — this is set up for
+local dev (`docker-compose.yml`) but **not yet for production** (Render).
+Deployed as-is, `QuestionGraderJob.perform_later` would enqueue into a Redis
+instance that doesn't exist there.
 
 ---
 
@@ -185,12 +254,14 @@ sessions). Implementation: a simple check of 4 digits (DDMM derived from
 security — it's reducing the chance that someone completes the test on
 behalf of another student as a joke.
 
-**Session cleanup:** `session[:student_id]` (and any attempt-scoped session
-key) must be cleared once the attempt is submitted/completed. The expected
-case is each student using their own phone (with a printed/paper version for
-students without a smartphone), but the session still shouldn't outlive the
-attempt — otherwise a later scan on the same device could resume as the
-previous student.
+**Session cleanup (superseded, see Decision #14):** results are now meant to
+be re-visitable (student entry flow below), so `session[:student_id]` is no
+longer cleared after viewing a completed attempt — it persists for the
+browser session like any other Rails session cookie. The residual risk is a
+classmate reloading the same page on a handed-over phone before the tab
+closes and seeing that student's grade; consistent with this section's
+opening line, that's an acceptable gap given the passcode was never real
+authentication to begin with.
 
 ---
 
@@ -212,6 +283,20 @@ previous student.
 - **Rails I18n** — multi-language support (see section above)
 - **Stimulus** — test timer (if a time limit is needed), dynamic question
   fields when building a test
+- **Sidekiq + Redis** — background jobs: `QuestionGraderJob` (LLM grading,
+  see "LLM Grading" above) and Devise's `deliver_later` emails. Redis runs
+  locally via `docker-compose.yml`; **not yet configured in production**.
+  `Sidekiq::Web` is mounted at `/sidekiq`, gated behind teacher auth
+  (`authenticate :teacher do ... end` in `routes.rb`), not public.
+- **gemini-ai** (gem) — thin wrapper around the Gemini API, used by
+  `GeminiApiService` for long_text grading
+- **rack-attack** — throttles `StudentPasscodesController#create` (10
+  attempts/minute per student) — the public student-entry flow (see
+  Decision #14) means the passcode-entry page is reachable without a saved
+  link, so brute-forcing the 4-digit DDMM code is cheaper than it used to be
+- **RuboCop** (`rubocop` + `rubocop-rails`, not the omakase preset) — the
+  omakase gem disables most Layout/indentation cops by design; this project
+  wants those checks, so it uses the plain gems instead
 
 ---
 
@@ -248,9 +333,9 @@ end to end without any manual setup through the admin panel:
 
 ## Later (post-MVP)
 
-- `long_text` question type + its grading (manual review, then LLM grading
-  via `AnswerGraderService`, provider with fallback) — add the `sidekiq` gem
-  back at this point, so the LLM call doesn't block the request cycle
+- Configure Sidekiq/Redis in production (Render) — see "Known gap" in "LLM
+  Grading" above; `long_text` grading itself is implemented, this is a
+  deploy-environment gap, not a code gap
 - Export results (CSV/PDF)
 - Per-class/per-student progress statistics across multiple tests
 - Time limit per test / per question
@@ -288,9 +373,11 @@ end to end without any manual setup through the admin panel:
     (no vice-principal/admin), no per-school isolation. Devise registration
     is closed; the one `Teacher` account is created via `db/seeds.rb`, not a
     public sign-up form.
-12. **`long_text` dropped from MVP entirely** (not just its grading) — MVP
-    ships `multiple_choice` and `short_text` only, both auto-gradable.
-    `long_text` + manual/LLM review return together in "Later".
+12. **`long_text` shipped** (revised — originally "dropped from MVP
+    entirely, returns with manual/LLM review in Later"). Implemented via
+    async LLM grading — see "LLM Grading" above — rather than a manual
+    teacher-review-only step; the teacher can still override any response's
+    points/feedback afterward regardless of how it was originally graded.
 13. **Per-question points, auto-computed score and grade, teacher can only
     override at the question level.** `Question#points` is decimal, minimum
     0.5 step — the question's weight. `TestAttempt#score` is the
@@ -301,10 +388,40 @@ end to end without any manual setup through the admin panel:
     `points_awarded` on an individual response (`grading_status:
     teacher_overridden`), which cascades: recomputes `score`, which
     recomputes `grade`.
-14. **`session[:student_id]` is cleared on attempt completion** — see
-    "Session cleanup" in Birth-Date Passcode. Most students are expected to
-    use their own phone (paper fallback for those without one), but the
-    session must not outlive the attempt regardless.
+14. **Results are re-visitable, not shown once and discarded** (revised
+    twice — originally "`session[:student_id]` is cleared on attempt
+    completion", then a first public-browsing redesign, superseded by the
+    version below). The one-time-view design made results practically
+    unreachable again after closing the tab (no saved link, re-auth required
+    a QR rescan) — and separately, async `long_text` grading (see "LLM
+    Grading" above) means a student's score at submission time isn't
+    necessarily final, so being able to check back later matters more than
+    it did in MVP.
+
+    Current flow, kept deliberately separate from the QR flow (QR remains
+    the *only* way to start/resume a test — see `TestAssignmentsController`/
+    `StudentPasscodesController`, unchanged):
+    root (`/`) → `StudentEntryController#index` lists school classes →
+    `#show` lists that class's students, by `Student#name_with_initial`
+    ("Tony S.", not the full name) → `StudentHistoryController#new`/`#create`
+    is a **separate DDMM login** from the QR flow's (different session
+    concern: proving "which student am I" to browse history, not
+    starting/resuming one specific attempt) → on success,
+    `StudentHistoryController#index` lists every attempt that student has
+    ever made, across all tests, linking into
+    `TestAttemptsController#show` (which no longer clears the session on
+    view).
+
+    The `name_with_initial` roster is a deliberate privacy narrowing from
+    the first version of this redesign, which listed full names of students
+    who'd *completed a specific test* — publicly linking an identity to a
+    test-completion status with no passcode check at all (flagged by
+    CodeRabbit as Major). Now: the class roster is just "who's in this
+    class" (no more sensitive than the pre-existing QR roster, which was
+    already public), and the sensitive link — which tests a specific student
+    has completed — is only visible after that student's own DDMM login.
+    See "Session cleanup" in Birth-Date Passcode for the residual
+    shared-device risk this still accepts (unchanged from before).
 15. **Paper/printed test-takers are entirely outside the system** — no
     manual attempt-entry UI in MVP (or currently planned at all). The
     teacher handles printing and grading those separately; nothing about

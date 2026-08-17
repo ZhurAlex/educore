@@ -21,12 +21,19 @@ export default class extends Controller {
   }
 
   updateVisibility(value) {
-    if(value === "multiple_choice"){
-      this.correctAnswerTarget.hidden = true
-      this.optionsContainerTarget.hidden = false
-    } else {
-      this.correctAnswerTarget.hidden = false
-      this.optionsContainerTarget.hidden = true
+    switch(value) {
+      case "multiple_choice":
+        this.correctAnswerTarget.hidden = true
+        this.optionsContainerTarget.hidden = false
+        break
+      case "short_text":
+      case "long_text":
+        this.correctAnswerTarget.hidden = false
+        this.optionsContainerTarget.hidden = true
+        break
+      default:
+        this.correctAnswerTarget.hidden = true
+        this.optionsContainerTarget.hidden = true
     }
   }
 }

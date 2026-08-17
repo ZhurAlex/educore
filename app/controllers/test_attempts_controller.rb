@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TestAttemptsController < ApplicationController
   # Public — the student takes the test here, no teacher auth. Access is
   # gated by session[:student_id] set during passcode verification (see
@@ -10,38 +12,41 @@ class TestAttemptsController < ApplicationController
   before_action :verify_owner!
 
   def show
-    @questions = @test_attempt.test.questions.includes(:options).order(:id) if @test_attempt.in_progress?
-
-    # Decision #14 (docs/SPEC.md): clear the session once the student has
-    # actually seen their result — not in `update`, since Turbo Drive
-    # expects a redirect after a form submission and ignores a rendered
-    # response, and clearing it *before* the redirect would 403 the very
-    # page that redirect points to.
-    session.delete(:student_id) if @test_attempt.completed?
+    if @test_attempt.in_progress?
+      @questions = @test_attempt.test.questions.includes(:options).order(:id)
+    else
+      @responses = @test_attempt.responses.includes(:option, question: :options).sort_by { |r| r.question.id }
+    end
   end
 
   def update
     if @test_attempt.in_progress?
       ActiveRecord::Base.transaction do
-        @test_attempt.test.questions.find_each do |question|
-          answer = answer_params(question)
-          response = @test_attempt.responses.find_or_initialize_by(question: question)
-          response.answer_text = answer[:answer_text]
-          response.option_id = answer[:option_id]
-          response.points_awarded = question.grade(answer_text: answer[:answer_text], option_id: answer[:option_id])
-          response.grading_status = :auto_graded
-          response.save!
-        end
-
-        @test_attempt.update!(status: :completed, completed_at: Time.current)
+        @test_attempt.test.questions.each { |question| grade_question(question) }
+        @test_attempt.update!(status: :evaluating, completed_at: Time.current)
         @test_attempt.recompute_score!
       end
+      QuestionGraderJob.perform_later(@test_attempt.id)
     end
 
     render json: { redirect_url: test_attempt_path(@test_attempt) }
   end
 
   private
+
+  def grade_question(question)
+    answer = answer_params(question)
+    response = @test_attempt.responses.find_or_initialize_by(question: question)
+    response.answer_text = answer[:answer_text]
+    response.option_id = answer[:option_id]
+    if question.long_text?
+      response.grading_status = :pending
+    else
+      response.points_awarded = question.grade(answer_text: answer[:answer_text], option_id: answer[:option_id]).points
+      response.grading_status = :auto_graded
+    end
+    response.save!
+  end
 
   def set_test_attempt
     @test_attempt = TestAttempt.find(params[:id])
@@ -55,7 +60,7 @@ class TestAttemptsController < ApplicationController
     params.dig(:answers, question.id.to_s)&.permit(:answer_text, :option_id) || {}
   end
 
-  def switch_locale_to_test(&action)
-    I18n.with_locale(TestAttempt.find(params[:id]).test.locale, &action)
+  def switch_locale_to_test(&)
+    I18n.with_locale(TestAttempt.find(params[:id]).test.locale, &)
   end
 end
