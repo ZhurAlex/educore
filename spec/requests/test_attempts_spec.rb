@@ -47,7 +47,7 @@ RSpec.describe 'TestAttempts', type: :request do
     end
 
     it 'shows a placeholder for long_text answers still awaiting grading' do
-      lt_question = create(:question, test: test, answer_type: :long_text, correct_answer: nil, points: 2)
+      lt_question = create(:question, test: test, answer_type: :long_text, correct_answer: 'A good essay', points: 2)
 
       attempt = sign_in_as_student!
       patch test_attempt_path(attempt), params: {

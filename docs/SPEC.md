@@ -116,9 +116,10 @@ TestAssignment
 Question
   - test_id, body, answer_type (enum: multiple_choice / short_text / long_text
     — see "Question Types and Grading Logic" below)
-  - correct_answer (reference answer for short_text normalization/compare;
-    required for short_text only, not used for long_text — the LLM grades
-    against the question body alone, see "LLM Grading" below)
+  - correct_answer (required for both short_text and long_text, different
+    use: exact normalize+compare for short_text, a reference answer/rubric
+    passed to Gemini for long_text — not used for multiple_choice, which
+    uses Options instead. See "LLM Grading" below.)
   - points (decimal, minimum 0.5, step 0.5 — question weight)
   has_many :options (for multiple_choice)
 
@@ -215,13 +216,16 @@ transaction open. So grading splits into two phases:
    loop is a no-op.
 
 **Provider integration** (`GeminiApiService`, `app/services/`): sends the
-question body + student answer to Gemini (`gemini-ai` gem), with
-`response_mime_type: 'application/json'` and a `response_schema` requiring
-`score` (integer) and `feedback` (string, with a schema-level description
-telling the model to answer in the question's language, not the answer's —
-relevant for translation-exercise questions). The 0–100 `score` Gemini
-returns is converted to the question's point scale and rounded to the
-nearest 0.5 in Ruby (`QuestionGrader`), not asked of the model directly.
+question body, the teacher's `correct_answer` (a reference answer/rubric —
+required for `long_text` questions, same field short_text uses for exact
+comparison, just interpreted differently) and the student's answer to Gemini
+(`gemini-ai` gem), with `response_mime_type: 'application/json'` and a
+`response_schema` requiring `score` (integer) and `feedback` (string, with a
+schema-level description telling the model to answer in the question's
+language, not the answer's — relevant for translation-exercise questions).
+The 0–100 `score` Gemini returns is converted to the question's point scale
+and rounded to the nearest 0.5 in Ruby (`QuestionGrader`), not asked of the
+model directly.
 
 **Failure handling**: `GeminiApiService` validates its own response (missing
 text, invalid JSON, missing `score`, `score` not an Integer in `0..100`) and

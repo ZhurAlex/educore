@@ -47,7 +47,7 @@ en:
         body: Question
         answer_type: Answer type
         points: Points
-        correct_answer: "Correct answer (short_text only)"
+        correct_answer: "Correct answer / reference answer (short_text, long_text)"
     errors:
       models:
         test_attempt:

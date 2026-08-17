@@ -9,6 +9,11 @@ class GeminiApiService
     it matches one exact phrasing — accept reasonable synonyms, paraphrasing,
     and minor differences in wording or grammar.
 
+    When a reference/expected answer is given, use it as the standard for
+    correctness — the student's answer should convey the same key content,
+    not match it word for word. When no reference answer is given, judge
+    based on the question alone.
+
     Score the answer from 0 to 100:
     - 100 means fully correct and complete
     - 0 means entirely incorrect, irrelevant, or left blank
@@ -35,9 +40,9 @@ class GeminiApiService
     )
   end
 
-  def check_answer(question_text, answer_text)
+  def check_answer(question_text, answer_text, reference_answer = nil)
     response = @client.generate_content({
-                                          contents: contents(question_text, answer_text),
+                                          contents: contents(question_text, answer_text, reference_answer),
                                           system_instruction: system_instruction,
                                           generation_config: generation_config
                                         })
@@ -61,13 +66,12 @@ class GeminiApiService
 
   private
 
-  def contents(question_text, answer_text)
-    text = <<~TEXT
-      Question: #{question_text}
-      Student's answer: #{answer_text}
-      Evaluate this answer.
-    TEXT
-    { role: 'user', parts: { text: text } }
+  def contents(question_text, answer_text, reference_answer)
+    lines = ["Question: #{question_text}"]
+    lines << "Reference/expected answer: #{reference_answer}" if reference_answer.present?
+    lines << "Student's answer: #{answer_text}"
+    lines << 'Evaluate this answer.'
+    { role: 'user', parts: { text: lines.join("\n") } }
   end
 
   def system_instruction

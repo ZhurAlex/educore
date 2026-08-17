@@ -47,7 +47,7 @@ uk:
         body: Питання
         answer_type: Тип відповіді
         points: Бали
-        correct_answer: "Правильна відповідь (лише short_text)"
+        correct_answer: "Правильна / еталонна відповідь (short_text, long_text)"
     errors:
       models:
         test_attempt:

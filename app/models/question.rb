@@ -13,7 +13,9 @@ class Question < ApplicationRecord
   validates :body, presence: true
   validates :answer_type, presence: true
   validates :points, numericality: { greater_than_or_equal_to: 0.5 }
-  validates :correct_answer, presence: true, if: :short_text?
+  # long_text also requires it — a reference answer/rubric passed to Gemini,
+  # not compared verbatim like short_text (see QuestionGrader/GeminiApiService).
+  validates :correct_answer, presence: true, if: -> { short_text? || long_text? }
   validate :points_in_half_point_increments
   validate :correct_options, if: :multiple_choice?
 

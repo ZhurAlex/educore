@@ -17,7 +17,7 @@ RSpec.describe QuestionGraderJob do
     end
 
     context 'when a pending response grades successfully' do
-      let(:question) { create(:question, test: test, answer_type: :long_text, points: 2, correct_answer: nil) }
+      let(:question) { create(:question, test: test, answer_type: :long_text, points: 2, correct_answer: 'Paris') }
       let!(:response) do
         create(:response, test_attempt: test_attempt, question: question, answer_text: 'answer',
                           grading_status: :pending, points_awarded: 0)
@@ -39,7 +39,7 @@ RSpec.describe QuestionGraderJob do
     end
 
     context 'when a pending response fails to grade' do
-      let(:question) { create(:question, test: test, answer_type: :long_text, points: 2, correct_answer: nil) }
+      let(:question) { create(:question, test: test, answer_type: :long_text, points: 2, correct_answer: 'Paris') }
       let!(:response) do
         create(:response, test_attempt: test_attempt, question: question, answer_text: 'answer',
                           grading_status: :pending, points_awarded: 0)

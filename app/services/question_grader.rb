@@ -35,7 +35,7 @@ class QuestionGrader
     return GradeResult.new if answer_text.blank?
 
     begin
-      result = GeminiApiService.new.check_answer(question.body, answer_text)
+      result = GeminiApiService.new.check_answer(question.body, answer_text, question.correct_answer)
     rescue GeminiApiService::GradingError => e
       return GradeResult.new(error: e.message)
     end

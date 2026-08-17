@@ -54,6 +54,14 @@ RSpec.describe Question, type: :model do
         expect(question.errors[:correct_answer]).to be_present
       end
     end
+
+    describe 'long_text' do
+      it 'requires correct_answer, as a reference answer passed to Gemini' do
+        question = build(:question, answer_type: :long_text, correct_answer: nil)
+        expect(question).not_to be_valid
+        expect(question.errors[:correct_answer]).to be_present
+      end
+    end
   end
 
   describe 'points' do

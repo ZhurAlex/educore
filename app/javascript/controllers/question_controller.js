@@ -27,6 +27,7 @@ export default class extends Controller {
         this.optionsContainerTarget.hidden = false
         break
       case "short_text":
+      case "long_text":
         this.correctAnswerTarget.hidden = false
         this.optionsContainerTarget.hidden = true
         break

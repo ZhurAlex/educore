@@ -76,6 +76,28 @@ RSpec.describe GeminiApiService do
       end
     end
 
+    context 'when a reference answer is given' do
+      it 'includes it in the prompt sent to Gemini' do
+        expect(client).to receive(:generate_content) do |payload|
+          expect(payload[:contents][:parts][:text]).to include('Reference/expected answer: Paris')
+          gemini_response({ score: 100, feedback: 'Correct' }.to_json)
+        end
+
+        service.check_answer('Capital of France?', 'Paris', 'Paris')
+      end
+    end
+
+    context 'when no reference answer is given' do
+      it 'omits the reference answer line from the prompt' do
+        expect(client).to receive(:generate_content) do |payload|
+          expect(payload[:contents][:parts][:text]).not_to include('Reference/expected answer')
+          gemini_response({ score: 50, feedback: 'Maybe' }.to_json)
+        end
+
+        service.check_answer('Explain photosynthesis', 'Plants make food from light')
+      end
+    end
+
     context 'when the request fails (network/HTTP error)' do
       it 'raises GradingError' do
         allow(client).to receive(:generate_content).and_raise(Faraday::TimeoutError, 'timed out')
