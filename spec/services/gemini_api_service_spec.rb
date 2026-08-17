@@ -7,7 +7,10 @@ RSpec.describe GeminiApiService do
 
   let(:client) { instance_double(Gemini::Controllers::Client) }
 
-  before { service.client = client }
+  # Stubbed before `service` is built: GeminiApiService#initialize calls the
+  # real Gemini.new, which resolves Google Auth credentials — that must never
+  # run in tests, regardless of what's (or isn't) in GEMINI_API_KEY locally.
+  before { allow(Gemini).to receive(:new).and_return(client) }
 
   def gemini_response(text)
     { 'candidates' => [{ 'content' => { 'parts' => [{ 'text' => text }] } }] }
