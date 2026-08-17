@@ -8,9 +8,11 @@ en:
   student_entry:
     index:
       title: Choose your class
-    results:
-      heading: Who has completed this test
-      empty: Nobody has completed this test yet.
+
+  student_history:
+    index:
+      title: "%{name}'s tests"
+      empty: No attempts yet.
 
   common:
     edit: Edit
@@ -178,6 +180,7 @@ en:
       completed_headline: "Nice work — you're done!"
       completed_note: You can close this page now. Your teacher will see the result.
       evaluating_note: "Some answers are still being reviewed — your score may still change. Check back later for your final result."
+      still_reviewing: Still being reviewed…
 
   attempts:
     index:

@@ -29,6 +29,36 @@ RSpec.describe 'TestAttempts', type: :request do
 
       expect(response).to have_http_status(:forbidden)
     end
+
+    it 'shows the per-question breakdown once the attempt is no longer in progress' do
+      st_question = create(:question, test: test, answer_type: :short_text, body: 'Capital of France?',
+                                      correct_answer: 'Paris', points: 2)
+
+      attempt = sign_in_as_student!
+      patch test_attempt_path(attempt), params: {
+        answers: { st_question.id.to_s => { answer_text: 'london' } }
+      }, as: :json
+
+      get test_attempt_path(attempt)
+
+      expect(response.body).to include(st_question.body)
+      expect(response.body).to include('london')
+      expect(response.body).to include('Paris')
+    end
+
+    it 'shows a placeholder for long_text answers still awaiting grading' do
+      lt_question = create(:question, test: test, answer_type: :long_text, correct_answer: nil, points: 2)
+
+      attempt = sign_in_as_student!
+      patch test_attempt_path(attempt), params: {
+        answers: { lt_question.id.to_s => { answer_text: 'some essay answer' } }
+      }, as: :json
+
+      get test_attempt_path(attempt)
+
+      expect(response.body).to include('some essay answer')
+      expect(response.body).to match(/reviewed|проверяется|перевіряється/)
+    end
   end
 
   describe 'PATCH /test_attempts/:id' do

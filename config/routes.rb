@@ -15,13 +15,21 @@ Rails.application.routes.draw do
   get 'dashboard', to: 'dashboard#show', as: :dashboard
 
   # Public student entry point (docs/SPEC.md Decision #14, revised) — browse
-  # to your *results* without needing a saved QR link: root lists classes,
-  # StudentEntryController#show lists that class's tests, #results lists only
-  # the students who've already completed the chosen test (unlike the QR
-  # roster below, which intentionally lists everyone so they can start).
+  # to your *test history* without needing a saved QR link. Deliberately
+  # separate from the QR flow below, which is the only way to start/resume a
+  # test: root lists classes, StudentEntryController#show lists that class's
+  # students (name + initial only — see Decision #14 discussion), then
+  # StudentHistoryController re-checks the DDMM passcode (a fresh login, not
+  # the same session as an in-progress QR attempt) before listing that
+  # student's own attempts across every test.
   root to: 'student_entry#index'
   get 'start/:school_class_id', to: 'student_entry#show', as: :student_entry
-  get 'start/:school_class_id/tests/:test_assignment_id', to: 'student_entry#results', as: :student_entry_results
+  get 'start/:school_class_id/students/:student_id/login',
+      to: 'student_history#new', as: :student_history_login
+  post 'start/:school_class_id/students/:student_id/login',
+       to: 'student_history#create'
+  get 'start/:school_class_id/students/:student_id/history',
+      to: 'student_history#index', as: :student_history
 
   # Teacher-side locale switcher — session-based, since the teacher has a
   # persistent Devise session (see docs/SPEC.md I18n section / Decision #8).

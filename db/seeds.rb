@@ -3,12 +3,19 @@
 # See docs/SPEC.md "Seed Data" section and Decision #11 — registration is
 # closed, so this is the only way to create the Teacher account.
 
-teacher = Teacher.find_or_create_by!(email: ENV.fetch('SEED_TEACHER_EMAIL', 'teacher@example.com')) do |t|
-  t.name = ENV.fetch('SEED_TEACHER_NAME', 'Alexander Zhuravskyi')
-  t.password = ENV.fetch('SEED_TEACHER_PASSWORD', 'password123')
-end
+teacher = if Rails.env.development?
+            Teacher.find_or_create_by!(email: ENV.fetch('SEED_TEACHER_EMAIL', 'teacher@example.com')) do |t|
+              t.name = ENV.fetch('SEED_TEACHER_NAME', 'Alexander Zhuravskyi')
+              t.password = ENV.fetch('SEED_TEACHER_PASSWORD', 'password123')
+            end
+          else
+            Teacher.find_or_create_by!(email: ENV.fetch('SEED_TEACHER_EMAIL', 'teacher@example.com')) do |t|
+              t.name = ENV.fetch('SEED_TEACHER_NAME')
+              t.password = ENV.fetch('SEED_TEACHER_PASSWORD')
+            end
+          end
 
-Rails.logger.debug { "Teacher: #{teacher.email}" }
+Rails.logger.debug { 'Teacher has been created' }
 
 # Demo class/test data — dev convenience only, not needed in production.
 if Rails.env.development?

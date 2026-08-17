@@ -12,7 +12,11 @@ class TestAttemptsController < ApplicationController
   before_action :verify_owner!
 
   def show
-    @questions = @test_attempt.test.questions.includes(:options).order(:id) if @test_attempt.in_progress?
+    if @test_attempt.in_progress?
+      @questions = @test_attempt.test.questions.includes(:options).order(:id)
+    else
+      @responses = @test_attempt.responses.includes(:option, question: :options).sort_by { |r| r.question.id }
+    end
   end
 
   def update

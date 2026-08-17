@@ -56,6 +56,26 @@ RSpec.describe GeminiApiService do
       end
     end
 
+    context 'when the score is not a number' do
+      it 'raises GradingError' do
+        allow(client).to receive(:generate_content)
+          .and_return(gemini_response({ score: '80', feedback: 'Good job' }.to_json))
+
+        expect { service.check_answer('2 + 2?', '4') }
+          .to raise_error(GeminiApiService::GradingError, /wrong score type/)
+      end
+    end
+
+    context 'when the score is outside the 0..100 range' do
+      it 'raises GradingError' do
+        allow(client).to receive(:generate_content)
+          .and_return(gemini_response({ score: 150, feedback: 'Good job' }.to_json))
+
+        expect { service.check_answer('2 + 2?', '4') }
+          .to raise_error(GeminiApiService::GradingError, /wrong score value/)
+      end
+    end
+
     context 'when the request fails (network/HTTP error)' do
       it 'raises GradingError' do
         allow(client).to receive(:generate_content).and_raise(Faraday::TimeoutError, 'timed out')

@@ -2,9 +2,11 @@ ru:
   student_entry:
     index:
       title: Выберите свой класс
-    results:
-      heading: Кто уже прошёл этот тест
-      empty: Пока никто не прошёл этот тест.
+
+  student_history:
+    index:
+      title: "Тесты — %{name}"
+      empty: Пока нет попыток.
 
   nav:
     brand: Educore
@@ -180,6 +182,7 @@ ru:
       completed_headline: "Молодец — тест завершён!"
       completed_note: Можешь закрывать эту страницу. Учитель увидит результат.
       evaluating_note: "Некоторые ответы ещё проверяются — балл может измениться. Зайди позже, чтобы увидеть итоговый результат."
+      still_reviewing: Ещё проверяется…
 
   attempts:
     index:

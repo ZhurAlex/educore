@@ -1,0 +1,14 @@
+<h1><%= t(".title", name: @student.full_name) %></h1>
+
+<% if @test_attempts.any? %>
+  <ul>
+    <% @test_attempts.each do |attempt| %>
+      <li>
+        <%= link_to attempt.test.title, test_attempt_path(attempt) %>
+        — <%= t("attempts.index.status") %>: <%= attempt.status %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p><%= t(".empty") %></p>
+<% end %>

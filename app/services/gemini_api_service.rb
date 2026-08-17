@@ -48,6 +48,10 @@ class GeminiApiService
     result = JSON.parse(text)
     raise GradingError, 'response missing score' unless result.key?('score')
 
+    raise GradingError, 'wrong score type' unless result['score'].is_a?(Integer)
+
+    raise GradingError, 'wrong score value' unless (0..100).cover?(result['score'])
+
     result
   rescue Faraday::Error => e
     raise GradingError, "Gemini request failed: #{e.message}"
