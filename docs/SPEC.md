@@ -249,6 +249,18 @@ instance restart, and the `noeviction` maxmemory policy is recommended over
 the default `allkeys-lru` so Redis refuses new writes under memory pressure
 rather than silently evicting queued jobs).
 
+**This deployment is non-durable — accept that explicitly, don't just note
+"data is lost."** If Redis restarts while a `QuestionGraderJob` is still
+queued, that job is gone, not delayed: the `TestAttempt` stays in
+`evaluating` forever (the student-facing "still being reviewed" note has no
+timeout or fallback), and a queued Devise email (e.g. a password reset)
+silently never sends. There is currently no automatic detection or retry for
+either case. Recovery is manual: find the stuck `TestAttempt` and re-run
+`QuestionGraderJob.perform_later(attempt.id)` from `bin/rails console` on the
+production instance. Acceptable for this project's scale (one teacher, no
+paying users, low volume) — but if that stops being true, the fix is a paid
+persistent Key Value instance, not more code.
+
 ---
 
 ## Birth-Date "Passcode" — Clarification
