@@ -26,9 +26,10 @@ account above to sign in.
 - Sidekiq — background jobs: `QuestionGraderJob` (long_text answers graded
   by Gemini, see below — a slow/failing LLM call must not block the
   request or hold a DB transaction open) and Devise's `deliver_later`
-  emails. **Not yet configured in production** — see SPEC's "LLM Grading"
-  section for that gap. `Sidekiq::Web` is mounted at `/sidekiq`, behind
-  teacher auth.
+  emails. In production (Render), Sidekiq runs backgrounded inside the same
+  Web Service as Puma rather than a separate paid Background Worker — see
+  SPEC's "LLM Grading" section for the trade-off. `Sidekiq::Web` is mounted
+  at `/sidekiq`, behind teacher auth.
 - Gemini (`gemini-ai` gem, via `GeminiApiService`) — grades open-ended
   (`long_text`) answers: 0–100 score converted to the question's point
   scale, plus written feedback shown to both student and teacher. See SPEC's
