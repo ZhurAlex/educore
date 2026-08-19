@@ -13,6 +13,11 @@
   </div>
 
   <div>
+    <%= form.label :subject %>
+    <%= form.select :subject, Test.subjects.keys %>
+  </div>
+
+  <div>
     <%= form.label :locale %>
     <%= form.select :locale, Test::LOCALES %>
   </div>

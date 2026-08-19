@@ -43,6 +43,7 @@ uk:
       test:
         title: Назва
         locale: Мова
+        subject: Предмет
       question:
         body: Питання
         answer_type: Тип відповіді

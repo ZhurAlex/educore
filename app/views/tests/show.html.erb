@@ -1,5 +1,6 @@
 <h1><%= @test.title %></h1>
 <p><%= Test.human_attribute_name(:locale) %>: <%= @test.locale %></p>
+<p><%= Test.human_attribute_name(:subject) %>: <%= @test.subject %></p>
 
 <%= link_to t("common.edit"), edit_test_path(@test) %>
 <%= button_to t("common.delete"), test_path(@test), method: :delete,

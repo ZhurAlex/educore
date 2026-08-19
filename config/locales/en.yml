@@ -43,6 +43,7 @@ en:
       test:
         title: Title
         locale: Locale
+        subject: Subject
       question:
         body: Question
         answer_type: Answer type

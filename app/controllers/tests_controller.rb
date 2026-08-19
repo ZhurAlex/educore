@@ -56,6 +56,6 @@ class TestsController < ApplicationController
   end
 
   def test_params
-    params.require(:test).permit(:title, :locale)
+    params.require(:test).permit(:title, :locale, :subject)
   end
 end

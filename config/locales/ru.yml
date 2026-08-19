@@ -43,6 +43,7 @@ ru:
       test:
         title: Название
         locale: Язык
+        subject: Предмет
       question:
         body: Вопрос
         answer_type: Тип ответа

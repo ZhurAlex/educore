@@ -30,7 +30,7 @@ RSpec.describe 'Tests', type: :request do
   describe 'POST /tests' do
     it 'creates a test owned by the current teacher' do
       expect do
-        post tests_path, params: { test: { title: 'English quiz', locale: 'uk' } }
+        post tests_path, params: { test: { title: 'English quiz', locale: 'uk', subject: 'english' } }
       end.to change(teacher.tests, :count).by(1)
     end
   end
