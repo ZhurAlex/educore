@@ -67,4 +67,8 @@ Rails.application.routes.draw do
   authenticate :teacher do
     mount Sidekiq::Web => '/sidekiq'
   end
+
+  namespace :api do
+    resources :test_attempts, only: [:index]
+  end
 end
