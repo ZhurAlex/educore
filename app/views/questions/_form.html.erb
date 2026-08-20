@@ -14,7 +14,8 @@
 
   <div>
     <%= form.label :answer_type %>
-    <%= form.select :answer_type, Question.answer_types.keys, {}, data: { action: "question#showFields", question_target: "answerTypes" } %>
+    <%= form.select :answer_type, Question.answer_types.keys.map { |key| [t("questions.answer_types.#{key}"), key] },
+                    {}, data: { action: "question#showFields", question_target: "answerTypes" } %>
   </div>
 
   <div>

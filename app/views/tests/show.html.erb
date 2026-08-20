@@ -1,6 +1,6 @@
 <h1><%= @test.title %></h1>
 <p><%= Test.human_attribute_name(:locale) %>: <%= @test.locale %></p>
-<p><%= Test.human_attribute_name(:subject) %>: <%= @test.subject %></p>
+<p><%= Test.human_attribute_name(:subject) %>: <%= t("tests.subjects.#{@test.subject}") %></p>
 
 <%= link_to t("common.edit"), edit_test_path(@test) %>
 <%= button_to t("common.delete"), test_path(@test), method: :delete,
@@ -10,7 +10,7 @@
 <ul>
   <% @questions.each do |question| %>
     <li>
-      <%= question.body %> (<%= question.answer_type %>, <%= question.points %> pts)
+      <%= question.body %> (<%= t("questions.answer_types.#{question.answer_type}") %>, <%= question.points %> pts)
       <%= link_to t("common.edit"), edit_question_path(question) %>
       <%= button_to t("common.delete"), question_path(question), method: :delete,
             form: { data: { turbo_confirm: t(".delete_question_confirm") } } %>

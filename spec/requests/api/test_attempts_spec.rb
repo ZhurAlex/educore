@@ -27,6 +27,14 @@ RSpec.describe 'Api::TestAttempts', type: :request do
 
         expect(response).to have_http_status(:success)
       end
+
+      it 'is unauthorized when ANALYTICS_API_KEY is blank, even with no token given' do
+        allow(ENV).to receive(:fetch).with('ANALYTICS_API_KEY').and_return('')
+
+        get api_test_attempts_path
+
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
 
     context 'filtering' do

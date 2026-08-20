@@ -14,7 +14,7 @@
 
   <div>
     <%= form.label :subject %>
-    <%= form.select :subject, Test.subjects.keys %>
+    <%= form.select :subject, Test.subjects.keys.map { |key| [t("tests.subjects.#{key}"), key] } %>
   </div>
 
   <div>

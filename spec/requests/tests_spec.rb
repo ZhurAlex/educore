@@ -25,6 +25,23 @@ RSpec.describe 'Tests', type: :request do
       get test_path(test)
       expect(response).to redirect_to(dashboard_path)
     end
+
+    it 'shows the localized subject label, not the raw enum key' do
+      test = create(:test, teacher: teacher, subject: :english)
+      get test_path(test)
+
+      expect(response.body).to include('Англійська')
+      expect(response.body).not_to include('english')
+    end
+
+    it "shows each question's localized answer_type label, not the raw enum key" do
+      test = create(:test, teacher: teacher)
+      create(:question, test: test, answer_type: :short_text)
+      get test_path(test)
+
+      expect(response.body).to include('Коротка відповідь')
+      expect(response.body).not_to include('short_text')
+    end
   end
 
   describe 'POST /tests' do
@@ -32,6 +49,14 @@ RSpec.describe 'Tests', type: :request do
       expect do
         post tests_path, params: { test: { title: 'English quiz', locale: 'uk', subject: 'english' } }
       end.to change(teacher.tests, :count).by(1)
+    end
+
+    it 'fails validation (not a 500) on an unknown subject' do
+      expect do
+        post tests_path, params: { test: { title: 'English quiz', locale: 'uk', subject: 'geography' } }
+      end.not_to change(teacher.tests, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 end

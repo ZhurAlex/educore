@@ -9,7 +9,7 @@ Shared-secret bearer token, not a real auth system (single trusted
 consumer, not multi-tenant) — same spirit as the rest of this app's
 lightweight auth choices, see SPEC's "Birth-Date Passcode" section.
 
-```
+```http
 Authorization: Bearer <token>
 ```
 

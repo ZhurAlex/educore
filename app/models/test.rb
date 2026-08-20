@@ -3,7 +3,9 @@
 class Test < ApplicationRecord
   LOCALES = %w[uk ru en].freeze
 
-  enum :subject, { math: 0, english: 1 }
+  # validate: true — an unknown subject otherwise raises ArgumentError at
+  # assignment (500 in production) instead of failing validation normally.
+  enum :subject, { math: 0, english: 1 }, validate: true
 
   belongs_to :teacher
   has_many :test_assignments, dependent: :destroy
