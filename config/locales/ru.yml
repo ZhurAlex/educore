@@ -43,6 +43,7 @@ ru:
       test:
         title: Название
         locale: Язык
+        subject: Предмет
       question:
         body: Вопрос
         answer_type: Тип ответа
@@ -97,6 +98,9 @@ ru:
       success: Ученик убран.
 
   tests:
+    subjects:
+      math: Математика
+      english: Английский
     index:
       title: Мои тесты
     show:
@@ -123,6 +127,10 @@ ru:
       success: Тест удалён.
 
   questions:
+    answer_types:
+      multiple_choice: Один из вариантов
+      short_text: Короткий ответ
+      long_text: Развёрнутый ответ
     new:
       title: "Новый вопрос для %{test_title}"
     edit:

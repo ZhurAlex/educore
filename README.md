@@ -26,9 +26,10 @@ account above to sign in.
 - Sidekiq — background jobs: `QuestionGraderJob` (long_text answers graded
   by Gemini, see below — a slow/failing LLM call must not block the
   request or hold a DB transaction open) and Devise's `deliver_later`
-  emails. **Not yet configured in production** — see SPEC's "LLM Grading"
-  section for that gap. `Sidekiq::Web` is mounted at `/sidekiq`, behind
-  teacher auth.
+  emails. In production (Render), Sidekiq runs backgrounded inside the same
+  Web Service as Puma rather than a separate paid Background Worker — see
+  SPEC's "LLM Grading" section for the trade-off. `Sidekiq::Web` is mounted
+  at `/sidekiq`, behind teacher auth.
 - Gemini (`gemini-ai` gem, via `GeminiApiService`) — grades open-ended
   (`long_text`) answers: 0–100 score converted to the question's point
   scale, plus written feedback shown to both student and teacher. See SPEC's
@@ -137,3 +138,62 @@ bundle exec rubocop       # lint/style — same check CI runs
 - `long_text` grading logic lives in `app/services/` (`QuestionGrader`,
   `GeminiApiService`), not on the `Question`/`Response` models — see SPEC's
   "LLM Grading" section before touching it.
+
+## Development Roadmap
+
+### Stage 1 — Core MVP (Rails + Hotwire)
+- Student testing platform: QR-code access, birthdate-based auth (DDMM)
+- Question types: `multiple_choice`, `short_text` — both auto-graded
+  (`long_text` wasn't part of the MVP; it's introduced in Stage 3 below,
+  directly with LLM grading, not as a separate manual-review step first)
+- Teacher admin panel for test creation and management
+- CI with branch protection and mandatory CodeRabbit review
+- ~90% test coverage (SimpleCov)
+- Deployed on Render + Neon (PostgreSQL)
+
+### Stage 2 — React Test-Taking Flow
+- Rebuilt the student test-taking page in React, embedded via jsbundling-rails
+  (single deployment, preserves session-based auth — not a separate SPA)
+- Component hierarchy with lifting state up (`TestAttemptApp → Question →
+  MultipleChoiceAnswer/ShortTextAnswer`)
+- Custom `ConfirmDialog` component
+- Fetch layer with CSRF handling, error handling, and timeouts
+- i18n via React Context, reusing existing Rails translations
+
+### Stage 3 — LLM Grading for Long-Text Answers
+- New `long_text` answer type, graded by Gemini (`GeminiApiService`) via a
+  reference answer/rubric the teacher provides — the model isn't judging
+  blind, it's grading against what the teacher actually expects
+- Scoring logic in `QuestionGrader`: converts Gemini's 0–100 score to the
+  question's point scale, rounded to the nearest 0.5, so minor mistakes
+  (e.g. a spelling slip) don't zero out an otherwise-correct answer
+- Grading runs in a Sidekiq background job, off the request/DB-transaction
+  path — a slow or failing LLM call can't block a student's submission
+- Failure handling: a custom `GeminiApiService::GradingError` wraps every
+  failure mode (network errors, malformed/out-of-range scores from Gemini),
+  caught per-response so one bad answer can't crash grading for the rest of
+  the attempt — it's flagged `manual_check_required` for the teacher instead
+  of silently staying ungraded
+- `rack-attack` throttling on the passcode endpoint, added once that flow
+  became reachable without a saved link (see next point)
+- Redesigned the public results-browsing flow after a CodeRabbit review
+  flagged the first version as exposing student identity + test-completion
+  status with no passcode check: the public class roster now shows only
+  name + last initial, and viewing a student's actual results requires its
+  own DDMM login, separate from the QR flow used to start/resume a test
+- Verified end-to-end in production: deploy → Redis → Sidekiq → Gemini →
+  score + feedback saved and visible to the teacher
+
+### Stage 4 — Python Service for Learning Gap Analysis (in progress)
+- **4.1 — Data pipeline:** Python service reads long-text answers and scores
+  from the EduCore database (or via API)
+- **4.2 — Error categorization:** LLM-based classification of each answer's
+  error type (grammar, vocabulary, verb tense, etc.), not just a score
+- **4.3 — Aggregation:** group categorized errors by student and by class to
+  surface patterns
+- **4.4 — Teacher recommendations:** turn aggregated data into actionable
+  output — what to review with the whole class vs. with a specific student
+
+### Stage 5 — RAG-Based Homework Generation (planned)
+- Use identified learning gaps (from Stage 4) to retrieve relevant sections
+  from uploaded textbooks and generate personalized homework assignments

@@ -19,6 +19,11 @@ class TestAttempt < ApplicationRecord
     message: :active_attempt_exists
   }, if: :in_progress?
 
+  scope :for_test, ->(id) { where(test_id: id) if id.present? }
+  scope :for_student, ->(id) { where(student_id: id) if id.present? }
+  scope :for_school_class, ->(id) { joins(student: :school_class).where(school_classes: { id: id }) if id.present? }
+  scope :for_subject, ->(subject) { joins(:test).where(tests: { subject: subject }) if subject.present? }
+
   # Decision #13 (docs/SPEC.md): score is the auto-computed sum of
   # points_awarded; grade is score rounded up, never entered manually.
   def recompute_score!

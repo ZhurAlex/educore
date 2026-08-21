@@ -31,7 +31,7 @@ if Rails.env.development?
     end
   end
 
-  test = teacher.tests.find_or_create_by!(title: 'English Vocabulary Quiz') do |t|
+  test = teacher.tests.find_or_create_by!(title: 'English Vocabulary Quiz', subject: 1) do |t|
     t.locale = 'uk'
   end
 
@@ -84,7 +84,7 @@ avenger_classes.each_with_index do |avenger_class, class_index|
   end
 end
 
-math_test = teacher.tests.find_or_create_by!(title: 'Math: Basic Arithmetic') do |t|
+math_test = teacher.tests.find_or_create_by!(title: 'Math: Basic Arithmetic', subject: 0) do |t|
   t.locale = 'en'
 end
 

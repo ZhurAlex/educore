@@ -43,6 +43,7 @@ en:
       test:
         title: Title
         locale: Locale
+        subject: Subject
       question:
         body: Question
         answer_type: Answer type
@@ -97,6 +98,9 @@ en:
       success: Student removed.
 
   tests:
+    subjects:
+      math: Math
+      english: English
     index:
       title: My tests
     show:
@@ -123,6 +127,10 @@ en:
       success: Test deleted.
 
   questions:
+    answer_types:
+      multiple_choice: Multiple choice
+      short_text: Short answer
+      long_text: Long answer
     new:
       title: "New question for %{test_title}"
     edit:

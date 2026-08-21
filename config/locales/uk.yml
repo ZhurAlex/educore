@@ -43,6 +43,7 @@ uk:
       test:
         title: Назва
         locale: Мова
+        subject: Предмет
       question:
         body: Питання
         answer_type: Тип відповіді
@@ -97,6 +98,9 @@ uk:
       success: Учня прибрано.
 
   tests:
+    subjects:
+      math: Математика
+      english: Англійська
     index:
       title: Мої тести
     show:
@@ -123,6 +127,10 @@ uk:
       success: Тест видалено.
 
   questions:
+    answer_types:
+      multiple_choice: Один із варіантів
+      short_text: Коротка відповідь
+      long_text: Розгорнута відповідь
     new:
       title: "Нове питання для %{test_title}"
     edit:

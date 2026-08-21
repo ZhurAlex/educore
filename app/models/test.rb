@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class Test < ApplicationRecord
-  # MVP locales — see docs/SPEC.md Decision #5. UI chrome only; test content
-  # (title/questions) stays in whatever language the teacher wrote it in.
   LOCALES = %w[uk ru en].freeze
+
+  # validate: true — an unknown subject otherwise raises ArgumentError at
+  # assignment (500 in production) instead of failing validation normally.
+  enum :subject, { math: 0, english: 1 }, validate: true
 
   belongs_to :teacher
   has_many :test_assignments, dependent: :destroy
@@ -13,4 +15,5 @@ class Test < ApplicationRecord
 
   validates :title, presence: true
   validates :locale, presence: true, inclusion: { in: LOCALES }
+  validates :subject, presence: true
 end

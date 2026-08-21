@@ -237,11 +237,29 @@ multiple long_text responses. `QuestionGraderJob` maps that into
 `grading_status: manual_check_required` (flagged in red in the teacher's
 per-response table) rather than leaving a response silently ungraded.
 
-**Known gap**: Sidekiq needs Redis and a separate worker process
-(`bundle exec sidekiq`) in every environment it runs in — this is set up for
-local dev (`docker-compose.yml`) but **not yet for production** (Render).
-Deployed as-is, `QuestionGraderJob.perform_later` would enqueue into a Redis
-instance that doesn't exist there.
+**Production Sidekiq (Render)**: a dedicated Background Worker service costs
+extra on Render (no free tier for that service type), so `bundle exec
+sidekiq` runs backgrounded inside the same Web Service as Puma instead —
+Start Command is `bundle exec sidekiq & bundle exec puma ...`. Trade-off,
+deliberately accepted for a low-traffic single-teacher app: Render only
+health-checks the Puma process, so a crashed Sidekiq wouldn't be noticed or
+restarted, and the two processes share the dyno's CPU/RAM. Redis itself is
+Render's free Key Value tier (25MB, no disk persistence — data is lost on
+instance restart, and the `noeviction` maxmemory policy is recommended over
+the default `allkeys-lru` so Redis refuses new writes under memory pressure
+rather than silently evicting queued jobs).
+
+**This deployment is non-durable — accept that explicitly, don't just note
+"data is lost."** If Redis restarts while a `QuestionGraderJob` is still
+queued, that job is gone, not delayed: the `TestAttempt` stays in
+`evaluating` forever (the student-facing "still being reviewed" note has no
+timeout or fallback), and a queued Devise email (e.g. a password reset)
+silently never sends. There is currently no automatic detection or retry for
+either case. Recovery is manual: find the stuck `TestAttempt` and re-run
+`QuestionGraderJob.perform_later(attempt.id)` from `bin/rails console` on the
+production instance. Acceptable for this project's scale (one teacher, no
+paying users, low volume) — but if that stops being true, the fix is a paid
+persistent Key Value instance, not more code.
 
 ---
 
@@ -284,10 +302,13 @@ authentication to begin with.
 - **Stimulus** — test timer (if a time limit is needed), dynamic question
   fields when building a test
 - **Sidekiq + Redis** — background jobs: `QuestionGraderJob` (LLM grading,
-  see "LLM Grading" above) and Devise's `deliver_later` emails. Redis runs
-  locally via `docker-compose.yml`; **not yet configured in production**.
-  `Sidekiq::Web` is mounted at `/sidekiq`, gated behind teacher auth
-  (`authenticate :teacher do ... end` in `routes.rb`), not public.
+  see "LLM Grading" above) and Devise's `deliver_later` emails. Locally,
+  Redis runs via `docker-compose.yml` and Sidekiq is its own process
+  (`bundle exec sidekiq`); in production (Render), both run inside the one
+  Web Service to avoid paying for a separate Background Worker — see "LLM
+  Grading" above for the trade-off this accepts. `Sidekiq::Web` is mounted
+  at `/sidekiq`, gated behind teacher auth (`authenticate :teacher do ... end`
+  in `routes.rb`), not public.
 - **gemini-ai** (gem) — thin wrapper around the Gemini API, used by
   `GeminiApiService` for long_text grading
 - **rack-attack** — throttles `StudentPasscodesController#create` (10
@@ -333,9 +354,9 @@ end to end without any manual setup through the admin panel:
 
 ## Later (post-MVP)
 
-- Configure Sidekiq/Redis in production (Render) — see "Known gap" in "LLM
-  Grading" above; `long_text` grading itself is implemented, this is a
-  deploy-environment gap, not a code gap
+- A real (paid) Background Worker on Render, instead of Sidekiq sharing the
+  Web Service's dyno with Puma — see "Production Sidekiq (Render)" in "LLM
+  Grading" above for the trade-off currently accepted instead
 - Export results (CSV/PDF)
 - Per-class/per-student progress statistics across multiple tests
 - Time limit per test / per question
