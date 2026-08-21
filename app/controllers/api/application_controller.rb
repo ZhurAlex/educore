@@ -6,7 +6,7 @@ module Api
 
     def authenticate_api_token!
       token = request.headers['Authorization']&.remove('Bearer ')
-      expected = ENV['ANALYTICS_API_KEY']
+      expected = ENV.fetch('ANALYTICS_API_KEY', nil)
 
       # A blank or unset expected token must never match — otherwise a
       # misconfigured (empty-but-set or missing) ANALYTICS_API_KEY would let

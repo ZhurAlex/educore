@@ -6,7 +6,7 @@ RSpec.describe 'Api::TestAttempts', type: :request do
   let(:token) { 'test-token' }
   let(:headers) { { 'Authorization' => "Bearer #{token}" } }
 
-  before { allow(ENV).to receive(:[]).with('ANALYTICS_API_KEY').and_return(token) }
+  before { allow(ENV).to receive(:fetch).with('ANALYTICS_API_KEY', nil).and_return(token) }
 
   describe 'GET /api/test_attempts' do
     context 'authentication' do
@@ -29,7 +29,7 @@ RSpec.describe 'Api::TestAttempts', type: :request do
       end
 
       it 'is unauthorized when ANALYTICS_API_KEY is blank, even with no token given' do
-        allow(ENV).to receive(:[]).with('ANALYTICS_API_KEY').and_return('')
+        allow(ENV).to receive(:fetch).with('ANALYTICS_API_KEY', nil).and_return('')
 
         get api_test_attempts_path
 
@@ -37,7 +37,7 @@ RSpec.describe 'Api::TestAttempts', type: :request do
       end
 
       it 'is unauthorized when ANALYTICS_API_KEY is unset (nil)' do
-        allow(ENV).to receive(:[]).with('ANALYTICS_API_KEY').and_return(nil)
+        allow(ENV).to receive(:fetch).with('ANALYTICS_API_KEY', nil).and_return(nil)
 
         get api_test_attempts_path
 
