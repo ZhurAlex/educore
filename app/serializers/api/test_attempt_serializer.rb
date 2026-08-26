@@ -15,12 +15,15 @@ module Api
         # .to_f — decimal columns otherwise serialize as strings ("2.0"),
         # not JSON numbers; see docs/API_CONTRACT.md.
         score: test_attempt.score&.to_f,
+        started_at: test_attempt.started_at,
         student: { id: test_attempt.student.id, name: test_attempt.student.full_name },
         test: { id: test_attempt.test.id, title: test_attempt.test.title, subject: test_attempt.test.subject },
         responses: test_attempt.responses.map do |r|
           {
             question: r.question.body,
             answer: r.question.multiple_choice? ? r.option&.body : r.answer_text,
+            correct_answer: correct_answer(r.question),
+            answer_type: r.question.answer_type,
             points_awarded: r.points_awarded&.to_f,
             max_points: r.question.points&.to_f,
             feedback: r.feedback,
@@ -28,6 +31,14 @@ module Api
           }
         end
       }
+    end
+
+    def correct_answer(question)
+      if question.multiple_choice?
+        question.options.find(&:correct?).body
+      else
+        question.correct_answer
+      end
     end
   end
 end

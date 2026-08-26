@@ -3,7 +3,7 @@
 module Api
   class TestAttemptsController < Api::ApplicationController
     def index
-      test_attempts = TestAttempt.includes(:student, :test, responses: %i[question option])
+      test_attempts = TestAttempt.includes(:student, :test, responses: [:option, { question: :options }])
                                  .for_subject(attempts_params[:subject])
                                  .for_student(attempts_params[:student_id])
                                  .for_test(attempts_params[:test_id])

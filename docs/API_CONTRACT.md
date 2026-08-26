@@ -52,12 +52,17 @@ in `app/models/test_attempt.rb`) — safe to combine any subset.
   "id": 13,
   "status": "completed",           // in_progress | evaluating | completed
   "score": 3.0,                    // sum of points_awarded; null if nothing graded yet
+  "started_at": "2026-08-20T14:39:06.000Z",
   "student": { "id": 18, "name": "Джин Грей" },
   "test": { "id": 6, "title": "New test 2", "subject": "math" },
   "responses": [
     {
       "question": "Capital of France?",
       "answer": "Paris",           // answer_text (short_text/long_text) or the chosen Option#body (multiple_choice)
+      "correct_answer": "Paris",   // multiple_choice: the correct Option#body. short_text: the exact-match string.
+                                    // long_text: Question#correct_answer as passed to Gemini — a reference
+                                    // answer/rubric, not something answer_text is ever compared to verbatim.
+      "answer_type": "short_text", // multiple_choice | short_text | long_text
       "points_awarded": 2.0,       // 0 for ungraded/wrong; null semantics not used, always a number
       "max_points": 2.0,           // the question's own point value — needed to compute a ratio, points_awarded alone isn't comparable across questions
       "feedback": null,            // only ever populated for long_text (Gemini's explanation, or a teacher's own note); always null for multiple_choice/short_text
@@ -73,11 +78,11 @@ strings by default (`"2.0"`, not `2.0`) — `Api::TestAttemptSerializer`
 explicitly calls `.to_f` on all of them so the contract is a real number, not
 something the consumer has to remember to parse.
 
-**Deliberately excluded:** `Student#birth_date` (that's the DDMM passcode —
-never exposed anywhere, including here) and `Question#correct_answer` (the
-reference answer/rubric — not needed for gap analysis, and multiple_choice's
-"correct" comes through as which `Option#body` was picked vs. `answer_text`
-for the others, not a separate correct-answer field).
+**Deliberately excluded:** `Student#birth_date` only — that's the DDMM
+passcode, never exposed anywhere, including here. `Question#correct_answer`
+*is* included (as `correct_answer` per response) specifically so gap analysis
+can compare what was answered against what should have been, not just infer
+"wrong" from `points_awarded < max_points`.
 
 ### Implementation
 
