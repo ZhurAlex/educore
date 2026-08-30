@@ -84,7 +84,59 @@ passcode, never exposed anywhere, including here. `Question#correct_answer`
 can compare what was answered against what should have been, not just infer
 "wrong" from `points_awarded < max_points`.
 
-### Implementation
+## `GET /api/school_classes`
+
+Lookup endpoint — every `SchoolClass` in the system, for populating a class
+picker in `educore-analytics`' own UI (no filters, no ownership scoping; see
+"Ownership model" in `docs/SPEC.md` — `SchoolClass` isn't teacher-owned).
+
+No query parameters.
+
+`200 OK`, a JSON array of:
+
+```jsonc
+{ "id": 5, "name": "6-А" }
+```
+
+## `GET /api/tests`
+
+Lookup endpoint for a class → tests cascade in the UI.
+
+### Query parameters
+
+| Param | Filters by |
+|---|---|
+| `school_class_id` | tests assigned to that class (via `TestAssignment`) |
+
+No param → every `Test` in the system. Implemented as `Test.for_school_class`
+in `app/models/test.rb`.
+
+`200 OK`, a JSON array of:
+
+```jsonc
+{ "id": 24, "title": "Present Simple" }
+```
+
+## `GET /api/students`
+
+Lookup endpoint for a class → students cascade in the UI.
+
+### Query parameters
+
+| Param | Filters by |
+|---|---|
+| `school_class_id` | `Student#school_class_id` |
+
+No param → every `Student` in the system. Implemented as
+`Student.for_school_class` in `app/models/student.rb`.
+
+`200 OK`, a JSON array of:
+
+```jsonc
+{ "id": 81, "name": "Феликс Юсупов" }   // name is Student#full_name, not a raw column
+```
+
+## Implementation
 
 - `Api::ApplicationController` (`app/controllers/api/`) — token auth, base
   class for every API controller. `ActionController::Base`, not
@@ -96,8 +148,12 @@ can compare what was answered against what should have been, not just infer
   serializer gem. One instance per record; `index` builds the array via
   `.map`, not some `render json:, each_serializer:` mechanism (that's an
   `active_model_serializers` feature — this app doesn't have that gem).
+- `Api::SchoolClassesController`/`Api::TestsController`/`Api::StudentsController`
+  — simple lookup endpoints, no dedicated serializer (the shape is small
+  enough that `.select(...).as_json` or a one-line `.map` is clearer than a
+  PORO for these).
 
-### Known gaps
+## Known gaps
 
 - No pagination. Fine at current data volume (single teacher, low
   question/response counts); revisit if `educore-analytics` starts pulling

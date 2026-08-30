@@ -16,4 +16,6 @@ class Test < ApplicationRecord
   validates :title, presence: true
   validates :locale, presence: true, inclusion: { in: LOCALES }
   validates :subject, presence: true
+
+  scope :for_school_class, ->(id) { joins(:school_classes).where(school_classes: { id: id }) if id.present? }
 end
