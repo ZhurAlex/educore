@@ -57,12 +57,13 @@ RSpec.describe 'Api::Tests', type: :request do
       end
     end
 
-    it 'returns id and title only' do
+    it 'returns id, title and subject only' do
       test = create(:test, title: 'Present Simple')
 
       get api_tests_path, headers: headers
 
-      expect(response.parsed_body).to contain_exactly({ 'id' => test.id, 'title' => 'Present Simple' })
+      expect(response.parsed_body).to contain_exactly({ 'id' => test.id, 'subject' => test.subject,
+                                                        'title' => 'Present Simple' })
     end
   end
 end

@@ -3,7 +3,8 @@
 module Api
   class TestsController < Api::ApplicationController
     def index
-      render json: Test.for_school_class(index_params[:school_class_id]).select(:id, :title).as_json
+      render json: Test.for_school_class(index_params[:school_class_id])
+                       .select(:id, :title, :subject).as_json
     end
 
     private
