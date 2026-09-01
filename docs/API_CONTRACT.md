@@ -114,7 +114,7 @@ in `app/models/test.rb`.
 `200 OK`, a JSON array of:
 
 ```jsonc
-{ "id": 24, "title": "Present Simple" }
+{ "id": 24, "subject": "english", "title": "Present Simple" }
 ```
 
 ## `GET /api/students`
