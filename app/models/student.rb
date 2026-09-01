@@ -6,6 +6,8 @@ class Student < ApplicationRecord
 
   validates :first_name, :last_name, :birth_date, presence: true
 
+  scope :for_school_class, ->(id) { where(school_class_id: id) if id.present? }
+
   def full_name
     "#{first_name} #{last_name}"
   end

@@ -70,5 +70,8 @@ Rails.application.routes.draw do
 
   namespace :api do
     resources :test_attempts, only: [:index]
+    resources :school_classes, only: [:index]
+    resources :students, only: [:index]
+    resources :tests, only: [:index]
   end
 end

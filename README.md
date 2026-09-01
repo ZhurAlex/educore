@@ -8,6 +8,16 @@ answers are graded by an LLM (Gemini) in the background.
 
 Full design rationale and decisions log: [docs/SPEC.md](docs/SPEC.md).
 
+## Companion project
+
+[`educore-analytics`](https://github.com/ZhurAlex/educore-analytics) (Python/FastAPI)
+reads every student answer through this app's read-only API and turns them into
+LLM-generated, teacher-facing learning-gap recommendations — per student (recurring
+mistakes, topics learned then forgotten) and per class (which questions/topics tripped
+up the most students). It's a separate service, not a plugin: `educore` doesn't know it
+exists beyond exposing the API. Full request/response contract:
+[docs/API_CONTRACT.md](docs/API_CONTRACT.md).
+
 ## Demo
 
 Live at https://educore-gdt0.onrender.com/ — note this is free-tier hosting,
@@ -184,15 +194,20 @@ bundle exec rubocop       # lint/style — same check CI runs
 - Verified end-to-end in production: deploy → Redis → Sidekiq → Gemini →
   score + feedback saved and visible to the teacher
 
-### Stage 4 — Python Service for Learning Gap Analysis (in progress)
-- **4.1 — Data pipeline:** Python service reads long-text answers and scores
-  from the EduCore database (or via API)
-- **4.2 — Error categorization:** LLM-based classification of each answer's
-  error type (grammar, vocabulary, verb tense, etc.), not just a score
-- **4.3 — Aggregation:** group categorized errors by student and by class to
-  surface patterns
-- **4.4 — Teacher recommendations:** turn aggregated data into actionable
-  output — what to review with the whole class vs. with a specific student
+### Stage 4 — Python Service for Learning Gap Analysis (`../educore-analytics`)
+- Read-only, token-authenticated API (`GET /api/test_attempts`, plus
+  `/api/school_classes`/`/api/tests`/`/api/students` lookup endpoints) built
+  specifically for this companion service — full contract in
+  [docs/API_CONTRACT.md](docs/API_CONTRACT.md)
+- `educore-analytics` (FastAPI, stateless — no database of its own, always
+  reads live from this API): a student-level endpoint (recurring mistakes,
+  and topics answered correctly once then wrong again later) and a
+  class-level endpoint (which questions/topics the class struggled with
+  most), both pre-aggregated in code before a single LLM call turns them
+  into a plain-text, teacher-facing recommendation
+- LLM layer reused from an earlier project (`../TeacherBot`): a
+  ports-and-adapters `LLMProvider` interface, Gemini with automatic Mistral
+  fallback on failure
 
 ### Stage 5 — RAG-Based Homework Generation (planned)
 - Use identified learning gaps (from Stage 4) to retrieve relevant sections
